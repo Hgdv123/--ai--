@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "error_type": "错编号顺序",
+      "detected": true,
+      "expected_kinds": [
+        "编号顺序"
+      ],
+      "matched_kinds": [
+        "编号顺序"
+      ],
+      "issue_kinds": [
+        "文末未引用",
+        "编号顺序"
+      ],
+      "issue_count": 4
+    },
+    {
+      "error_type": "假引用",
+      "detected": true,
+      "expected_kinds": [
+        "引用真实性",
+        "引用越界"
+      ],
+      "matched_kinds": [
+        "引用真实性",
+        "引用越界"
+      ],
+      "issue_kinds": [
+        "引用真实性",
+        "引用越界"
+      ],
+      "issue_count": 2
+    },
+    {
+      "error_type": "缺文献类型标识",
+      "detected": true,
+      "expected_kinds": [
+        "格式合规"
+      ],
+      "matched_kinds": [
+        "格式合规"
+      ],
+      "issue_kinds": [
+        "格式合规"
+      ],
+      "issue_count": 1
+    },
+    {
+      "error_type": "重复著录",
+      "detected": true,
+      "expected_kinds": [
+        "重复著录"
+      ],
+      "matched_kinds": [
+        "重复著录"
+      ],
+      "issue_kinds": [
+        "文末未引用",
+        "重复著录"
+      ],
+      "issue_count": 2
+    }
+  ],
+  "total": 4,
+  "detected": 4,
+  "recall": 1.0,
+  "note": "每类埋入 1 处已知错误；严格判定标准为「检出对应类别的问题」",
+  "source_draft": {
+    "path": "F:\\文脉ai助手\\数据与产物\\outputs\\draft.md",
+    "body_chars": 926,
+    "refs_chars": 1241,
+    "refs_parsed": 6
+  },
+  "generated_at": "2026-09-18 17:21:18"
+}

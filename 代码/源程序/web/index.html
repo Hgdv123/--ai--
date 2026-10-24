@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<title>文脉 · 帮你把文献写成综述</title>
+<style>
+  :root{
+    --ink:#14181f; --ink2:#3d4552; --ink3:#737d8c; --line:#e6e9ee;
+    --bg:#f5f7fa; --card:#fff; --brand:#2563d6; --brand-2:#4f8ef7;
+    --brand-soft:#eef3ff; --brand-line:#cddffd;
+    --ok:#0d7a4a; --ok-soft:#eefaf3; --ok-line:#c5ecd7;
+    --warn:#a8600a; --warn-soft:#fff8ec; --warn-line:#f4ddb4;
+    --bad:#b3261e; --bad-soft:#fdf0ef; --bad-line:#f2c8c4;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-size:15.5px;line-height:1.75;
+       font-family:-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif}
+  .wrap{max-width:940px;margin:0 auto;padding:26px 18px 80px}
+
+  .hero{text-align:center;padding:10px 0 26px}
+  .hero h1{margin:0 0 10px;font-size:30px;letter-spacing:.5px}
+  .hero h1 .brand{color:var(--brand)}
+  .hero p{margin:0;color:var(--ink2);font-size:16px}
+
+  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;
+        padding:22px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(20,24,31,.04)}
+  .step-head{display:flex;align-items:center;gap:11px;margin-bottom:14px;flex-wrap:wrap}
+  .num{flex:0 0 28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;
+       font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step-head h2{margin:0;font-size:17.5px}
+  .step-head .hint{margin-left:auto;color:var(--ink3);font-size:13px}
+
+  .drop{border:2px dashed var(--brand-line);border-radius:12px;background:var(--brand-soft);
+        padding:30px 20px;text-align:center;cursor:pointer;transition:.18s}
+  .drop:hover,.drop.over{background:#e4edff;border-color:var(--brand)}
+  .drop .big{font-size:16.5px;font-weight:600;color:var(--brand)}
+  .drop .small{color:var(--ink3);font-size:13.5px;margin-top:5px}
+
+  .filelist{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:#f0f3f8;border:1px solid var(--line);border-radius:999px;
+        padding:4px 12px;font-size:13px;color:var(--ink2);max-width:100%;
+        overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .sub{margin-top:16px;padding-top:15px;border-top:1px dashed var(--line);
+       display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .sub span{color:var(--ink3);font-size:13.5px}
+
+  button{font-family:inherit;font-size:15px;border-radius:10px;padding:11px 22px;
+         cursor:pointer;border:1px solid transparent;transition:.15s}
+  .primary{background:var(--brand);color:#fff;font-weight:600;font-size:16px;padding:14px 34px}
+  .primary:hover{background:#1d54b8}
+  .primary:disabled{background:#b9c3d2;cursor:not-allowed}
+/* 正在生成：可点（点了会提示），只是视觉上明确"这轮在跑"。
+   不用 :disabled——disable 一旦没被解开按钮就永久变灰（实测踩到过）。 */
+.primary.running{background:#8fa6c8;cursor:progress}
+  .ghost{background:#fff;color:var(--brand);border-color:var(--brand-line)}
+  .ghost:hover{background:var(--brand-soft)}
+  .ghost:disabled{color:#aab3c0;border-color:var(--line);cursor:not-allowed}
+  .link{background:none;color:var(--brand);text-decoration:underline;padding:4px;font-size:13.5px}
+  .center{text-align:center}
+
+  .bar{height:8px;background:#e8ecf2;border-radius:999px;overflow:hidden;margin:16px 0 10px}
+  .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand-2));
+           border-radius:999px;transition:width .5s ease}
+  .phase{color:var(--ink2);font-size:14.5px;text-align:center}
+
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+  .metric{background:#f8fafc;border:1px solid var(--line);border-radius:11px;padding:13px 15px;text-align:center}
+  .metric .v{font-size:23px;font-weight:700;color:var(--brand)}
+  .metric .k{color:var(--ink3);font-size:12.5px;margin-top:2px}
+
+  .paper{background:#fff;border:1px solid var(--line);border-radius:11px;padding:24px 28px;
+         max-height:540px;overflow-y:auto;line-height:2.05;font-size:15.5px}
+  .paper h3{margin:0 0 14px;font-size:19px;text-align:center}
+  .paper p{margin:0 0 14px;text-indent:2em;text-align:justify}
+  .paper .refs{margin-top:22px;padding-top:14px;border-top:1px solid var(--line)}
+  .paper .refs h4{margin:0 0 10px;font-size:15.5px}
+  .paper .refs div{font-size:13px;line-height:1.85;color:var(--ink2);
+                   padding-left:2.2em;text-indent:-2.2em;margin-bottom:5px}
+  .cite{color:var(--brand);font-weight:600}
+
+  .ok-box{background:var(--ok-soft);border:1px solid var(--ok-line);border-radius:11px;
+          padding:15px 18px;margin-bottom:16px}
+  .ok-box b{color:var(--ok)}
+  .warn-box{background:var(--warn-soft);border:1px solid var(--warn-line);border-radius:11px;
+            padding:15px 18px;margin-bottom:16px}
+  .issue{border-left:3px solid var(--warn-line);background:#fffdf8;padding:8px 12px;
+         border-radius:6px;margin-top:8px;font-size:13.5px}
+  .issue.high{border-left-color:var(--bad-line);background:var(--bad-soft)}
+
+  details{margin-top:16px}
+  summary{cursor:pointer;color:var(--ink2);font-size:14.5px;padding:6px 0;user-select:none}
+  summary:hover{color:var(--brand)}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin-top:12px}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:#f3f6fa;color:var(--ink2);font-weight:600;white-space:nowrap}
+  pre{background:#f8fafc;border:1px solid var(--line);color:var(--ink2);padding:12px 14px;
+      border-radius:9px;overflow-x:auto;font-size:12.5px;line-height:1.65;white-space:pre-wrap}
+  .muted{color:var(--ink3);font-size:13.5px}
+  /* 注意：不要用内联 style 写 display——内联优先级高于 .hidden，会导致元素永远显示。
+     所有"默认隐藏、需要时显示"的元素，display 一律用这里的 CSS 控制。 */
+  .hidden{display:none !important}
+  #privacy-modal:not(.hidden){display:flex}
+  #not-ready:not(.hidden){display:block}
+  @media(max-width:640px){
+    .hero h1{font-size:23px} .metrics{grid-template-columns:1fr}
+    .paper{padding:18px}
+  }
+  /* 处理方式按钮的"当前项"：明确选中态，而不是靠 disabled 变灰让人猜 */
+  button.mode-on{
+    background:var(--brand-soft) !important;
+    border-color:var(--brand) !important;
+    color:var(--brand) !important;
+    opacity:1 !important;
+    cursor:default;
+  }
+
+  /* ── 使用提示（右下角浮动按钮 + 滑出侧栏）──────────────────
+     放在浮层里而不是塞进正文流：页面已有 4 个步骤区，再插一块会挤压正文；
+     浮层随时可收，窄屏也不受影响。刻意**不加**全屏遮罩——它是"随时看一眼"
+     的性质，盖住正文会打断用户手上的操作。 */
+  #help-fab{
+    position:fixed;right:22px;bottom:22px;z-index:60;
+    display:inline-flex;align-items:center;gap:7px;
+    background:var(--brand);color:#fff;border:none;border-radius:999px;
+    padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;
+    box-shadow:0 8px 24px rgba(37,99,214,.34);
+    font-family:inherit;transition:transform .16s ease,box-shadow .16s ease;
+  }
+  #help-fab:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(37,99,214,.44)}
+  #help-fab:active{transform:translateY(0)}
+  #help-panel{
+    position:fixed;right:0;top:0;bottom:0;width:min(360px,92vw);z-index:70;
+    background:#fff;border-left:1px solid var(--line);
+    box-shadow:-10px 0 36px rgba(20,24,31,.16);
+    overflow-y:auto;overscroll-behavior:contain;
+    /* 用 100% 而不是 102%：面板贴在 right:0，移出一个自身宽度即完全出屏；
+       多出来的那 2% 会过度位移，反而在屏幕右缘留一条 7px 的边（实测量到）。 */
+    transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1);
+  }
+  #help-panel.open{transform:translateX(0)}
+  /* 顶部标题栏吸顶：面板很长，滚动时「收起」要始终可见可点 */
+  .help-head{
+    position:sticky;top:0;z-index:2;background:#fff;
+    padding:18px 20px 14px;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+  }
+  .help-head h3{margin:0;font-size:16.5px;letter-spacing:.2px}
+  .help-head .sub{margin:5px 0 0;font-size:12.5px;color:var(--ink3);line-height:1.6}
+  .help-close{
+    flex:0 0 auto;background:#f2f5f9;border:1px solid var(--line);border-radius:8px;
+    color:var(--ink2);font-size:13px;padding:5px 11px;cursor:pointer;font-family:inherit;
+  }
+  .help-close:hover{background:#e8edf5;color:var(--brand)}
+  .help-body{padding:2px 20px 34px}
+  .help-sec{margin-top:18px}
+  .help-sec h4{
+    margin:0 0 8px;font-size:13.5px;color:var(--brand);
+    display:flex;align-items:center;gap:7px;
+  }
+  .help-sec h4::before{
+    content:"";width:3px;height:13px;border-radius:2px;background:var(--brand);
+    display:inline-block;flex:0 0 auto;
+  }
+  .help-sec p,.help-sec li{font-size:13px;line-height:1.68;color:var(--ink2)}
+  .help-sec ol,.help-sec ul{margin:0;padding-left:19px}
+  .help-sec li{margin-bottom:3px}
+  .help-tip{
+    background:#f6f8fb;border:1px solid var(--line);border-left:3px solid #c9d8f2;
+    border-radius:8px;padding:9px 12px;font-size:12.5px;line-height:1.65;
+    color:var(--ink2);margin-top:9px;
+  }
+  /* 状态释义用定义列表更整齐，不再是一堆圆点 */
+  .help-states{margin:0;font-size:12.5px;line-height:1.6}
+  .help-states div{display:flex;gap:9px;padding:5px 0;border-bottom:1px dashed #eef1f6}
+  .help-states div:last-child{border-bottom:none}
+  .help-states b{flex:0 0 76px;color:var(--ink)}
+  .help-states span{flex:1;color:var(--ink3)}
+  .help-foot{
+    margin-top:22px;padding-top:14px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--ink3);line-height:1.7;
+  }
+  /* 这段动画原先写在 #not-ready 里的一个**嵌套 style 标签**中。
+     HTML 解析器不认 CSS 注释，嵌套的 style 标签会提前结束主样式表，
+     导致它之后的所有规则失效（实测：#help-* 整块被丢掉）。
+     动画属于全局样式，放在这里就对了。 */
+  @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1><span class="brand">文脉</span> · 文献整理与引用校对</h1>
+    <p>把论文丢进来，我帮你整理成对比表、"研究现状"初稿，并核对引用是否真实、格式是否合规。</p>
+    <p class="muted" style="font-size:13.5px;margin-top:8px">
+      说清楚我的定位：<b>我不是替你写论文的工具，是帮你把引用和格式做对的工具。</b>
+      正文由程序基于你导入的文献起草，<b>需要你逐句核对后再用</b>；引用是否成立，
+      你可以点开每条结论看我检索到的原文自己判断。
+    </p>
+  </div>
+
+  <!-- 常驻状态条：把"现在是什么处理方式、文献库有多少"固定在一处。
+       以前这两条信息分散在上方卡片和下方清单里，用户要来回找。 -->
+  <div id="status-strip"
+       style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;
+              background:#fff;border:1px solid var(--line);border-radius:12px;
+              padding:11px 16px;margin-bottom:14px;font-size:13.5px">
+    <span>处理方式：<span id="strip-mode" class="muted">读取中…</span></span>
+    <span>文献库：<b id="strip-count">—</b> 篇</span>
+    <span id="strip-state" class="muted">正在读取状态…</span>
+  </div>
+
+  <!-- 未配置 API Key 时的说明条。
+       为什么需要：评委拿到的是**占位符 Key**，界面里也**没有**填 Key 的入口，
+       只能手工改 .env 文件。不提示的话，用户选了「云端处理」却发现程序没走云端，
+       完全不知道原因，也不知道去哪里改。
+       只在「已确认处理方式 + 选了云端 + 没配 Key」时出现，不打扰正常使用。 -->
+  <div id="key-hint" class="hidden"
+       style="background:#f2f7ff;border:1px solid #cfe0f7;border-left:4px solid var(--brand);
+              border-radius:10px;padding:12px 16px;margin-bottom:14px;
+              font-size:13px;line-height:1.75;color:var(--ink2)"></div>
+
+  <div id="backend-down" class="hidden"
+       style="background:#fff8e6;border:1px solid #f0d9a0;color:#8a5a00;border-radius:10px;
+              padding:12px 16px;margin-bottom:14px;font-size:13.5px;line-height:1.65"></div>
+
+  <!-- 使用提示：右下角浮动按钮 + 滑出侧栏（不遮挡正文，随时可开着看） -->
+  <button id="help-fab" title="看看怎么用">💡 使用提示</button>
+  <aside id="help-panel" aria-label="使用提示">
+    <div class="help-head">
+      <div>
+        <h3>怎么用文脉</h3>
+        <p class="sub">不是替你写论文的工具，是帮你把<b>引用和格式</b>做对的工具。</p>
+      </div>
+      <button class="help-close" onclick="closeHelp()" title="收起（Esc 也可以）">收起 ✕</button>
+    </div>
+
+    <div class="help-body">
+      <div class="help-sec">
+        <h4>四步走</h4>
+        <ol>
+          <li><b>放入论文</b>：拖进 PDF / Word，可一次多篇；也可以用「用自带的 6 篇示例论文」先试一遍。</li>
+          <li><b>点「开始生成综述稿」</b>：读全文 → 抽卡片 → 做对比表 → 起草正文 → 核对引用。</li>
+          <li><b>看「你的综述稿」</b>：标红的是自检发现的引用问题，逐条核对后再用。</li>
+          <li><b>下载</b>：Word 是综述初稿 + 参考文献表；Excel 是逐篇对比表。</li>
+        </ol>
+        <div class="help-tip">
+          第一轮要跑 1–2 分钟（本地模式可能 2–4 分钟）。进度条会显示<b>已用秒数</b>，走字就说明没死机。
+        </div>
+      </div>
+
+      <div class="help-sec">
+        <h4>两种处理方式（随时可换）</h4>
+        <ul>
+          <li><b>云端处理</b>：调用阿里云百炼，质量最好，论文片段会上传。</li>
+          <li><b>仅本地处理</b>：用随应用打包的模型，<b>论文不出本机</b>，但质量与稳定性不如云端。</li>
+        </ul>
+        <div class="help-tip">
+          切换后<b>立刻生效</b>，不用刷新；已有结果不受影响，下次点「生成」才按新方式走。
+        </div>
+      </div>
+
+      <div class="help-sec">
+        <h4>论文清单里的状态</h4>
+        <div class="help-states">
+          <div><b>✓ 就绪</b><span>读到正文，可参与引用核对</span></div>
+          <div><b>待解析</b><span>还没处理，点「生成」时会一起处理</span></div>
+          <div><b>无正文</b><span>没抽到文字，多半是扫描件或纯图片 PDF</span></div>
+          <div><b>⚠ 非论文</b><span>没有论文章节与参考文献，建议删除</span></div>
+          <div><b>仅题录</b><span>只有元数据（如知网导出），不能核对原文</span></div>
+          <div><b>✗ 失败</b><span>文件损坏或格式不支持</span></div>
+        </div>
+      </div>
+
+      <div class="help-sec">
+        <h4>常见疑问</h4>
+        <ul>
+          <li><b>点了按钮没反应？</b>先看启动用的黑色窗口是否还开着——服务一停，页面就连不上。重新双击「启动文脉.bat」即可，页面会自动重连。</li>
+          <li><b>报告说"无法核对原文"？</b>那是这篇的全文没进库（没上传、或 PDF 是扫描件），<b>不是你的引用写错了</b>。可到「管理已放入的论文」看状态，或用「去搜索并补齐」。</li>
+          <li><b>「论断有据」报无支撑？</b>说明那句话在对应论文的原文里找不到依据，需要你核对后修改或换引用。
+              点问题右边的「查看它检索到的原文」能看到我检索到的段落，<b>以你看到的原文为准</b>；
+              像「所有方法都未超越 X」这类否定式表述容易误报。</li>
+          <li><b>结果过时了？</b>增删论文后结果会标为过期，点「重新生成综述稿」。</li>
+          <li><b>想从头开始？</b>点「清空文献库与结果」，会删掉论文、原文文件与已生成的稿子（「我的稿子」和设置保留）。</li>
+        </ul>
+      </div>
+
+      <div class="help-sec">
+        <h4>两点如实提醒</h4>
+        <div class="help-tip">
+          ① 正文由程序基于你导入的文献起草，<b>必须逐句核对后再用</b>；<br>
+          ② 离线模式的小模型能力有限，正文更保守也更需要核对，自检会把可疑处标出来。
+        </div>
+      </div>
+
+      <div class="help-foot">
+        关闭本面板：点右上角「收起 ✕」或按 <b>Esc</b>。右下角按钮可随时再打开。
+      </div>
+    </div>
+  </aside>
+
+  <div id="js-error" class="hidden"
+       style="background:#fdf0ef;border:1px solid #f2c8c4;color:#b3261e;border-radius:10px;
+              padding:12px 16px;margin-bottom:14px;font-size:13.5px"></div>
+
+  <!-- 首次使用：数据处理方式告知 -->
+  <div id="privacy-modal" class="hidden"
+       style="position:fixed;inset:0;background:rgba(20,24,31,.55);z-index:99;
+              align-items:center;justify-content:center;padding:16px">
+    <div style="background:#fff;border-radius:16px;max-width:660px;width:100%;
+                max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+                box-shadow:0 20px 50px rgba(0,0,0,.25)">
+      <div style="padding:22px 26px 8px;flex:0 0 auto">
+        <h2 style="margin:0 0 6px;font-size:19px">开始前，请先了解你的论文会怎么处理</h2>
+        <p class="muted" style="margin:0">这是一个学术写作辅助工具，需要把论文内容交给大模型分析。请选择你的处理方式。</p>
+      </div>
+
+      <div style="padding:8px 26px 0;overflow-y:auto;flex:1 1 auto">
+        <div id="opt-cloud" style="border:2px solid var(--brand);border-radius:12px;padding:14px 16px;
+                                   cursor:pointer;margin-bottom:10px;background:var(--brand-soft)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px;flex-wrap:wrap">
+            <b style="font-size:15.5px">① 云端处理（推荐，效果完整）</b>
+            <span class="pill" style="background:#fff">默认</span>
+          </div>
+          <div style="font-size:13.5px;line-height:1.75">
+            论文的<strong>标题、摘要、方法与结论片段</strong>会通过接口发送至
+            <strong>阿里云百炼（通义千问）</strong>进行分析，用于生成对比表与综述稿。<br>
+            <span class="muted">上传的 PDF 原文件<strong>不会</strong>被上传，只发送用于理解的文本片段；
+            发送内容不用于模型训练。分析结果保存在你自己电脑上。</span>
+          </div>
+        </div>
+
+        <div id="opt-local" style="border:2px solid var(--line);border-radius:12px;padding:14px 16px;
+                                   cursor:pointer">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+            <b style="font-size:15.5px">② 仅本地处理（不联网）</b>
+          </div>
+          <div style="font-size:13.5px;line-height:1.75">
+            论文内容<strong>完全不离开你的电脑</strong>，不调用任何云端服务。<br>
+            <span class="muted">代价：无法生成综述正文（只给出文献对比表与基本信息）。
+            适合文献涉密、或导师未发表成果等不便外传的情况。</span>
+          </div>
+        </div>
+
+        <div class="muted" style="font-size:12.5px;margin:10px 0 4px">
+          你可以随时在页面底部切换处理方式。
+        </div>
+      </div>
+
+      <div style="padding:14px 26px 20px;flex:0 0 auto;border-top:1px solid var(--line);
+                  background:#fff;border-radius:0 0 16px 16px">
+        <div class="center">
+          <button class="primary" id="privacy-confirm" style="width:100%">就用云端处理，开始使用</button>
+          <div class="muted" style="font-size:12.5px;margin-top:10px;line-height:1.6">
+            这只是<b>默认选项</b>，不影响已有数据。<br>
+            进应用后，页面上方「论文处理方式」随时可以改，改完立刻生效。
+          </div>
+          <div style="margin-top:10px">
+            <button class="link" id="privacy-skip"
+                    style="font-size:14px">卡住了？点这里跳过，先看应用 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="not-ready" class="hidden"
+       style="background:#fff8ec;border:1px solid #f4ddb4;border-radius:12px;padding:22px 24px;
+              margin-bottom:16px;text-align:center">
+    <div style="font-size:16.5px;font-weight:600;color:#a8600a">正在启动，请稍候…</div>
+    <div class="muted" style="margin-top:6px">
+      第一次启动需要读取论文并生成内容，大约 30 秒。<br>
+      页面会<strong>自动刷新</strong>，不用手动操作。
+    </div>
+    <div class="bar" style="margin-top:14px"><i style="width:60%;animation:pulse 1.4s ease-in-out infinite"></i></div>
+  </div>
+
+  <!-- 模式选择：写综述 / 检查我的稿子 -->
+  <div class="step" id="step-mode">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <b style="font-size:15px">我要：</b>
+      <button class="ghost" id="tab-write" style="font-size:14px;padding:8px 18px">
+        帮我写综述</button>
+      <button class="ghost" id="tab-check" style="font-size:14px;padding:8px 18px">
+        检查我的稿子</button>
+      <span class="muted" id="tab-hint" style="font-size:13px"></span>
+    </div>
+  </div>
+
+  <!-- 模式二：检查我的稿子 -->
+  <div id="step-mydraft" class="step hidden">
+    <div class="step-head">
+      <h2><span class="n">1</span>上传你自己的论文稿子</h2>
+    </div>
+    <p class="muted" style="margin:6px 0 12px">
+      上传你写的 Word 稿子（.docx），我会检查它的<strong>引用是否真实、格式是否合规、
+      有没有该引却没引</strong>，并告诉你哪些引用能在你导入的文献里核对、哪些不能。
+      <br>稿子<strong>只用于检查，不会进入文献库</strong>，也不会被当成综述素材。
+    </p>
+    <div id="draft-drop" class="drop">
+      <div class="big">点击选择 Word 文件，或拖到这里</div>
+      <div class="small">只支持 .docx · 若稿子是 PDF，请在 Word 里另存为 .docx</div>
+    </div>
+    <input type="file" id="draft-picker" accept=".docx" class="hidden">
+    <div id="draft-info" class="hidden"
+         style="margin-top:14px;border:1px solid var(--brand-line);border-radius:10px;
+                background:var(--brand-soft);padding:12px 14px;font-size:13.5px"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="primary" id="btn-check-draft" disabled>开始检查</button>
+      <button class="link hidden" id="btn-del-draft" style="color:#b3261e">删除稿子</button>
+      <span class="muted" id="draft-hint">请先上传稿子</span>
+    </div>
+  </div>
+
+  <div id="draft-result" class="step hidden">
+    <div class="step-head">
+      <h2><span class="n">2</span>检查结果</h2>
+    </div>
+    <div id="draft-summary" style="margin-top:10px"></div>
+    <div id="draft-issues" style="margin-top:14px"></div>
+    <div id="draft-match" style="margin-top:14px"></div>
+  </div>
+
+  <div class="step" id="step-upload">
+    <div class="step-head">
+      <div class="num">1</div>
+      <h2>放入你的论文</h2>
+      <div class="hint" id="lib-hint"></div>
+    </div>
+
+    <div class="drop" id="drop">
+      <div class="big">点击选择文件，或把文件拖到这里</div>
+      <div class="small">支持 PDF 与 Word（.docx）· 可一次选多篇 · 也可以上传你自己的论文初稿</div>
+    </div>
+    <input type="file" id="picker" multiple class="hidden"
+           accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+
+    <div class="filelist" id="filelist"></div>
+
+    <details id="papers-box" class="hidden" style="margin-top:14px">
+      <summary>管理已放入的论文（可单篇删除）</summary>
+      <div id="papers-list" style="margin-top:8px"></div>
+    </details>
+
+    <div class="sub">
+      <span>还没有论文？</span>
+      <button class="ghost" id="btn-example">用自带的 6 篇示例论文</button>
+      <button class="ghost" id="btn-refs">粘贴知网题录</button>
+      <button class="link" id="btn-clear" title="删除全部论文记录、原文文件，以及已生成的稿子与下载文件">清空文献库与结果</button>
+    </div>
+
+    <div id="refs-box" class="hidden"
+         style="margin-top:14px;border:1px solid var(--brand-line);border-radius:11px;
+                background:var(--brand-soft);padding:14px 16px">
+      <div style="font-size:14.5px;margin-bottom:8px">
+        <b>粘贴题录文本</b>
+        <span class="muted">支持知网/CNKI 导出的 RefWorks 格式（A1:/T1:/JF:）与【作者】【题名】格式</span>
+      </div>
+      <textarea id="refs-text" rows="8"
+        style="width:100%;font-family:Consolas,monospace;font-size:13px;padding:10px;
+               border:1px solid var(--line);border-radius:8px;resize:vertical"
+        placeholder="A1: 张三, 李四&#10;T1: 基于对比学习的小样本图像分类方法&#10;JF: 计算机学报&#10;YR: 2022&#10;&#10;A1: 王五&#10;T1: 图神经网络综述&#10;JF: 软件学报&#10;YR: 2020"></textarea>
+      <div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="primary" id="btn-refs-import" style="font-size:15px;padding:10px 22px">
+          导入这些题录</button>
+        <span class="muted" id="refs-hint">导出格式：知网 → 导出 → RefWorks</span>
+      </div>
+      <div id="refs-result" class="hidden" style="margin-top:10px;font-size:13.5px"></div>
+    </div>
+  </div>
+
+  <div class="step" id="step-run">
+    <div class="step-head">
+      <div class="num">2</div>
+      <h2>点一下，生成综述</h2>
+    </div>
+    <div class="center">
+      <button class="primary" id="btn-run">开始生成综述稿</button>
+      <div class="muted" style="margin-top:10px" id="run-tip">请先放入论文</div>
+    </div>
+
+    <div id="progress" class="hidden">
+      <div class="bar"><i id="bar-fill"></i></div>
+      <div class="phase" id="phase">准备中…</div>
+    </div>
+  </div>
+
+  <div class="step hidden" id="result-step">
+    <div class="step-head">
+      <div class="num">3</div>
+      <h2>你的综述稿</h2>
+      <div class="hint" id="result-hint"></div>
+    </div>
+
+    <div class="metrics" id="metrics"></div>
+    <div id="quality"></div>
+
+    <div class="center" style="margin-bottom:16px">
+      <button class="primary" id="btn-docx" title="研究现状初稿 + GB/T 7714 参考文献表">下载综述 Word</button>
+      <button class="ghost" id="btn-xlsx" style="margin-left:8px"
+              title="每篇论文的方法 / 数据 / 结果 / 局限对比表">下载对比表 Excel</button>
+    </div>
+
+    <div class="step" style="background:#f8fafc;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <b style="font-size:15.5px">让 AI 助手再帮你审一遍稿</b>
+        <button class="ghost" id="btn-agent" style="padding:7px 16px;font-size:14px">开始智能审稿</button>
+        <span class="muted" id="agent-hint">它会自己判断该检查什么：先读全稿，再挑可疑的引用回原文核对</span>
+      </div>
+      <div id="agent-out" class="hidden" style="margin-top:12px"></div>
+    </div>
+
+    <div class="paper" id="paper"></div>
+
+    <details>
+      <summary>查看文献对比表（每篇用了什么方法、结果如何、有什么局限）</summary>
+      <div style="overflow-x:auto"><table id="matrix"></table></div>
+    </details>
+
+    <details>
+      <summary>查看系统运行信息（给技术评审看的，日常可以忽略）</summary>
+      <div id="tech" style="margin-top:10px"></div>
+      <pre id="log"></pre>
+    </details>
+  </div>
+
+  <!-- 处理方式随时可切（首次弹窗里承诺过"可随时切换"，这里兑现） -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;
+                gap:12px;flex-wrap:wrap">
+      <div style="font-size:14px">
+        <b>论文处理方式</b>：<span id="mode-now" class="muted">读取中…</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="ghost" id="btn-mode-cloud" style="font-size:13px;padding:6px 14px">
+          改用云端处理</button>
+        <button class="ghost" id="btn-mode-local" style="font-size:13px;padding:6px 14px">
+          改用仅本地处理</button>
+      </div>
+    </div>
+    <div class="muted" style="font-size:12.5px;margin-top:8px">
+      <b>云端</b>：调用阿里云百炼，生成质量最好，论文片段会上传　·　
+      <b>仅本地</b>：用随应用打包的本地模型，论文不出本机，生成质量略低
+    </div>
+  </div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let pendingFiles = [];
+let busy = false;
+/* 生成流程的看门狗：一轮跑太久没正常收尾时把 busy 复位，避免按钮永久变灰 */
+let runWatchdog = null;
+let lastState = null;
+
+/* 把 JS 报错显示到页面上，避免"界面空白但毫无提示" */
+window.addEventListener('error', e => {
+  const box = $('js-error');
+  if (box){
+    box.classList.remove('hidden');
+    box.textContent = '页面脚本出错：' + (e.message || e.error || '未知错误');
+  }
+});
+window.addEventListener('unhandledrejection', e => {
+  const box = $('js-error');
+  if (box){
+    box.classList.remove('hidden');
+    box.textContent = '页面脚本出错：' + (e.reason && e.reason.message ? e.reason.message : e.reason);
+  }
+});
+
+function esc(s){
+  return (s==null?'':String(s)).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+
+/* ── 让"失败"能自己说清原因 ────────────────────────────────
+   浏览器对"连不上后端"只会给一句 `Failed to fetch`——用户看不出是
+   程序没启动、还是网络断了、还是等太久。这里在 fetch 这一层统一拦截，
+   把网络层错误翻译成"发生了什么 + 该怎么办"，于是所有调用点的
+   `catch` 里 e.message 已经是可读的说明了。
+   实测踩到过：/api/run 跑到一半服务进程退出，界面只显示
+   "正在读取并解析论文…失败：Failed to fetch"，无从下手。           */
+let _backendDown = false;
+async function _probeBackend(){
+  try{
+    const r = await fetch('/api/state', {cache:'no-store'});
+    return r.ok;
+  }catch(e){ return false; }
+}
+function _diagMessage(err){
+  const down = _backendDown;
+  const t = (down ? '后端服务没有响应' : '请求失败') +
+    '：' + (err && err.name === 'AbortError' ? '等待超时' : (err && err.message) || '未知网络错误');
+  return t + '。可能原因：' +
+    (down ? '① 启动用的黑色窗口已关闭或服务已退出（最常见） '
+          : '① 启动窗口正在跑初始化流程，服务还没起来 ') +
+    '② 端口 8848 被别的程序占用 ' +
+    '③ 请求处理时间超过浏览器等待上限。' +
+    '处理办法：回到启动窗口看最后几行提示；必要时关闭该窗口、重新双击「启动文脉.bat」，' +
+    '等它打印出网址后再操作本页；本页会每隔几秒自动重连，恢复后无需刷新。';
+}
+const _rawFetch = window.fetch.bind(window);
+window.fetch = async function(input, init){
+  try{
+    const resp = await _rawFetch(input, init);
+    if (_backendDown && resp && resp.ok) { _backendDown = false; _hideBackendBanner(); }
+    return resp;
+  }catch(e){
+    // 只有"服务不可达"才算后端掉线；请求被主动 abort（超时/取消）不算
+    if (!(e && e.name === 'AbortError') && !(await _probeBackend())){
+      _backendDown = true;
+      _showBackendBanner();
+    }
+    const err = new Error(_diagMessage(e));
+    err.diag = true;
+    err.cause = e;
+    throw err;
+  }
+};
+function _showBackendBanner(){
+  const b = $('backend-down');
+  if (!b) return;
+  b.classList.remove('hidden');
+  b.innerHTML = '<b>连不上后端服务（127.0.0.1:8848）。</b>' +
+    '这个页面已经打开，但负责计算的程序没有在运行，所以任何按钮点了都会失败。<br>' +
+    '<span class="muted">处理办法：找到启动时弹出的黑色窗口——若它已关闭，' +
+    '请重新双击 <b>启动文脉.bat</b>，等它打印出网址后再回到本页操作。' +
+    '本页会自动重连，恢复后无需手动刷新。</span>';
+  // 顺手探一次，恢复后自动收起
+  setTimeout(async () => {
+    if (_backendDown && await _probeBackend()){
+      _backendDown = false;
+      _hideBackendBanner();
+    }
+  }, 4000);
+}
+function _hideBackendBanner(){
+  const b = $('backend-down');
+  if (b) b.classList.add('hidden');
+}
+
+/* ── 使用提示面板 ─────────────────────────────────────────
+   首次访问自动展开一次（用 localStorage 记住，不反复打扰），
+   之后靠右下角按钮随时打开；Esc 也能关。 */
+function openHelp(){
+  $('help-panel').classList.add('open');
+  $('help-fab').classList.add('hidden');   // 面板开着时按钮让位，避免压在面板上
+  try{ localStorage.setItem('wm_help_seen', '1'); }catch(e){}
+}
+function closeHelp(){
+  $('help-panel').classList.remove('open');
+  $('help-fab').classList.remove('hidden');
+}
+$('help-fab').addEventListener('click', openHelp);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeHelp(); });
+// 首次访问：自动打开一次，让新用户直接看到怎么用
+try{
+  if (!localStorage.getItem('wm_help_seen')) setTimeout(openHelp, 1200);
+}catch(e){}
+
+/* ── 轻量提示条：给"我做了一件事、现在生效了"一个明确回执 ──────
+   切换处理方式这类操作，改完必须让用户**当场看见结果**，而不是
+   自己判断有没有生效、或去刷新页面确认。                        */
+function toast(msg, kind){
+  let box = $('toast');
+  if (!box){
+    box = document.createElement('div');
+    box.id = 'toast';
+    document.body.appendChild(box);
+  }
+  const color = kind === 'warn' ? '#8a5a00' : '#0d7a4a';
+  const bg = kind === 'warn' ? '#fff8e6' : '#eaf7f0';
+  const bd = kind === 'warn' ? '#f0d9a0' : '#bfe3cf';
+  box.setAttribute('style',
+    'position:fixed;left:50%;transform:translateX(-50%);bottom:26px;z-index:200;' +
+    'max-width:min(680px,92vw);background:' + bg + ';border:1px solid ' + bd + ';color:' + color +
+    ';border-radius:12px;padding:12px 18px;font-size:14px;line-height:1.6;' +
+    'box-shadow:0 8px 28px rgba(0,0,0,.14);transition:opacity .25s');
+  box.textContent = msg;
+  box.style.opacity = '1';
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => { box.style.opacity = '0'; }, 4200);
+}
+function stripMd(s){
+  return String(s||'').replace(/^#{1,6}\s*/gm,'').replace(/\*\*/g,'').trim();
+}
+function highlightCites(s){
+  return esc(s).replace(/\[(\d{1,3}(?:\s*[-,–]\s*\d{1,3})*)\]/g, '<span class="cite">[$1]</span>');
+}
+let timerStarted = false, runStartedAt = 0, runTimer = null;
+let runPhase = {name: '', step: '', hint: ''};   // 状态行的三个组成部分
+
+/* 状态行由**一个**函数统一合成：阶段名 + 进度 + 已用时。
+   曾经是"setProgress 写一次、随后又被 innerHTML 覆盖一次、计时器每秒再覆盖回来"，
+   三处互相打架，用户看到的内容会闪。集中到一处就不会打架。 */
+function _renderPhase(){
+  const el = $('phase');
+  if (!el) return;
+  const sec = timerStarted ? Math.round((Date.now() - runStartedAt) / 1000) : 0;
+  const parts = [];
+  if (runPhase.name) parts.push('<b>' + esc(runPhase.name) + '</b>');
+  if (runPhase.step) parts.push('<span class="muted">' + esc(runPhase.step) + '</span>');
+  if (timerStarted && sec >= 1) parts.push('<span class="muted">已用 ' + sec + ' 秒</span>');
+  el.innerHTML = parts.join('　·　') +
+    (runPhase.hint ? '<br><span class="muted">' + esc(runPhase.hint) + '</span>' : '');
+}
+function setProgress(pct, text){
+  $('bar-fill').style.width = pct + '%';
+  if (!text) return;
+  runPhase.name = text;
+  if (!timerStarted){
+    timerStarted = true;
+    runStartedAt = Date.now();
+    if (runTimer) clearInterval(runTimer);
+    runTimer = setInterval(_renderPhase, 1000);
+  }
+  _renderPhase();
+}
+function setPhaseStep(step, hint){
+  runPhase.step = step || '';
+  if (hint !== undefined) runPhase.hint = hint || '';
+  _renderPhase();
+}
+function stopRunTimer(){
+  timerStarted = false;
+  if (runTimer){ clearInterval(runTimer); runTimer = null; }
+}
+
+async function refresh(){
+  let st;
+  try{
+    const resp = await fetch('/api/state', {cache:'no-store'});
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    st = await resp.json();
+  }catch(e){
+    // 服务还没起来：显示等待提示，自动重试（用户看到的第一屏往往就是这里）
+    $('not-ready').classList.remove('hidden');
+    $('step-upload').classList.add('hidden');
+    $('step-run').classList.add('hidden');
+    // 关键：这里必须解开主按钮的禁用。HTML 里 btn-run 默认就是 disabled，
+    // 只在 refresh() 成功时才会被解开；服务起不来时原先直接 return，
+    // 按钮就永远是灰的——用户看到"按钮点不了"，而真正的问题是服务没起来
+    // （实测被反馈过：启动脚本崩了，页面停在旧状态，主按钮一直是灰的）。
+    $('btn-run').disabled = false;
+    $('run-tip').innerHTML = '<b style="color:var(--warn)">服务尚未就绪</b>，' +
+      '正在自动重试连接…（若长时间无反应，请回到命令行窗口查看提示）';
+    setTimeout(refresh, 2000);
+    return null;      // 调用方据此判断"没取到状态"
+  }
+  $('not-ready').classList.add('hidden');
+  $('step-upload').classList.remove('hidden');
+  $('step-run').classList.remove('hidden');
+
+  // 首次使用：先让用户确认数据处理方式
+  await checkPrivacy();
+
+  lastState = st;
+  const n = st.corpus.count || 0;
+  const fr = st.freshness || {};
+  const stale = fr.needs_run === true;
+  const hasDraft = !!(st.draft && st.draft.markdown);
+
+  $('lib-hint').textContent = n
+    ? `文献库中已有 ${n} 篇` + (stale ? ' · 有新论文尚未处理' : '')
+    : '还没有论文';
+  $('btn-clear').classList.toggle('hidden', n === 0);
+
+  // 顶部状态条：一句话说清"现在能不能直接下载结果"
+  const sc = $('strip-count');
+  if (sc) sc.textContent = n;
+  const ss = $('strip-state');
+  if (ss){
+    if (!n){
+      ss.innerHTML = '<span class="muted">还没有论文：先放入 PDF / Word，或用示例论文</span>';
+    } else if (stale){
+      ss.innerHTML = '<span style="color:var(--warn)">有新论文尚未处理：点「' +
+        ((hasDraft ? '重新' : '') + '生成综述稿」') + '</span>';
+    } else {
+      ss.innerHTML = '<span style="color:var(--ok)">结果已是最新，可直接下载</span>';
+    }
+  }
+
+  if (!busy){
+    $('btn-run').disabled = n === 0;
+    $('btn-run').textContent = (stale && hasDraft) ? '重新生成综述稿' : '开始生成综述稿';
+    $('run-tip').innerHTML = n === 0
+      ? '请先放入论文'
+      : (stale
+          ? '<b style="color:#a8600a">有论文还没处理，点上面的按钮生成</b>'
+          : // 用"点击后预计…"而不是"已就绪：…"——后者容易被读成"已经跑完了"
+            `${n} 篇论文已就位；点击后预计 1 分钟左右完成`);
+  }
+
+  if (hasDraft){
+    renderResult(st);
+    if (stale){
+      $('quality').insertAdjacentHTML('afterbegin',
+        `<div class="warn-box"><b style="color:var(--warn)">下面的结果没有包含你最新放进去的论文</b><br>
+         当前文献库 ${n} 篇，但这份稿子是基于更早的 ${st.draft.papers_used || '—'} 篇生成的。<br>
+         <span class="muted">点上面的「重新生成综述稿」即可更新。</span></div>`);
+      $('btn-docx').disabled = true;
+      $('btn-xlsx').disabled = true;
+    }
+  } else if (n > 0){
+    $('result-step').classList.add('hidden');
+  }
+
+  // 用最新的服务端状态重绘处理方式。
+  // 必须放在这里：_paintMode 依赖 lastState.settings（判断云端是否真的可用），
+  // 只在初始化和手动切换时调用的话，刷新后状态条会停留在旧判断上——
+  // 实测表现为"选了云端但没配 Key，状态条仍写云端处理"。
+  applyCurrentMode();
+
+  loadPapers();
+}
+
+/* 「选了云端但没配 Key」的说明条。
+   必须用 _currentMode（实际生效的模式）判断，不能用 privacyChoice：
+   后者只在首次弹窗里选过才更新，用户在设置区切到「仅本地处理」后它仍是 cloud，
+   横幅就会一直挂着"你选了云端处理"——而那时已经是本地了（实测被反馈过）。
+   界面里没有填 Key 的入口（设计如此：Key 属于部署配置，不放在页面上），
+   所以这里要把「去哪改、怎么改」讲清楚，否则用户只会觉得程序没生效。 */
+function _paintKeyHint(){
+  const kh = $('key-hint');
+  if (!kh) return;
+  kh.classList.add('hidden');            // 先收起，再按需展开，避免残留旧内容
+  if (_currentMode === 'local') return;  // 已选本地：这条提示不再适用
+  if (_cloudReady()) return;             // 云端 Key 可用：无需提示
+  // 放进"怎么改、改了要干嘛"的具体步骤，并把**重启**放在最显眼处：
+  // .env 只在程序启动时读一次，改完不重启，程序仍用旧的 Key（仍是本地通道）。
+  // 实测有人改完 .env、切到云端、点了生成，看到"离线模式"提示以为是 Key 无效——
+  // 其实只是没重启。这句提示必须先把这一点说清楚。
+  kh.innerHTML =
+    '<b>你选了「云端处理」，但当前程序没有加载到可用的百炼 API Key，正使用本地模型。</b><br>' +
+    '<span class="muted">' +
+    '若你刚刚才填好 Key：<b>必须重启程序才会生效</b>——用记事本打开 <b>代码\\.env</b>，' +
+    '把这一行改成你自己的 Key 并保存，然后关掉黑色命令行窗口、重新双击「启动文脉.bat」。<br>' +
+    '<code style="background:#eef4ff;padding:1px 5px;border-radius:4px">' +
+    'DASHSCOPE_API_KEY=你的百炼Key</code>　（注意：Key 必须是纯英文数字，' +
+    '含中文或空格会当作没填）<br>' +
+    '申请地址：<a href="https://bailian.console.aliyun.com/" target="_blank" rel="noopener">' +
+    'bailian.console.aliyun.com</a> → API-KEY 管理 → 创建我的 API-KEY<br>' +
+    '不填也能用：示例论文与全部结果已预置，可直接查看与下载；' +
+    '点「开始生成综述稿」会用随包本地模型重新生成（速度慢些、质量略低于云端）。' +
+    '</span>';
+  kh.classList.remove('hidden');
+}
+
+/* ── 数据处理方式（首次告知） ── */
+let privacyChoice = 'cloud';      // 默认选中云端，按钮始终可用（避免用户卡住）
+let privacyDismissed = false;     // 用户关掉后本次会话不再弹出
+async function checkPrivacy(){
+  if (privacyDismissed) return;
+  let p;
+  try{ p = await (await fetch('/api/privacy', {cache:'no-store'})).json(); }
+  catch(e){ return; }
+  if (p.acknowledged) return;          // 已确认过，不再打扰
+  $('privacy-modal').classList.remove('hidden');
+  if (!$('opt-cloud').dataset.wired){
+    $('opt-cloud').dataset.wired = '1';
+    $('opt-cloud').addEventListener('click', () => pickPrivacy('cloud'));
+    $('opt-local').addEventListener('click', () => pickPrivacy('local'));
+    $('privacy-confirm').addEventListener('click', confirmPrivacy);
+    $('privacy-skip').addEventListener('click', () => {
+      privacyDismissed = true;
+      $('privacy-modal').classList.add('hidden');
+    });
+    pickPrivacy('cloud');
+  }
+}
+function pickPrivacy(mode){
+  privacyChoice = mode;
+  const on = '2px solid var(--brand)', off = '2px solid var(--line)';
+  $('opt-cloud').style.border = mode === 'cloud' ? on : off;
+  $('opt-cloud').style.background = mode === 'cloud' ? 'var(--brand-soft)' : '#fff';
+  $('opt-local').style.border = mode === 'local' ? on : off;
+  $('opt-local').style.background = mode === 'local' ? 'var(--brand-soft)' : '#fff';
+  const btn = $('privacy-confirm');
+  btn.disabled = false;
+  btn.textContent = mode === 'cloud' ? '就用云端处理，开始使用' : '仅本地处理，开始使用';
+}
+async function confirmPrivacy(){
+  const btn = $('privacy-confirm');
+  const mode = privacyChoice || 'cloud';
+  const label = mode === 'cloud' ? '云端处理' : '仅本地处理';
+  btn.disabled = true;
+  btn.textContent = '正在保存…';
+  // 超时不能太短：以前是 6 秒，本地请求在忙的时候（比如正在跑生成）很容易撞上，
+  // 于是被推到"整页跳转"那条兜底路径——用户被带到一个陌生页面，感觉应用断了
+  //（实测被明确反馈为"很乱、断开了"）。这里放宽到 20 秒。
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 20000);
+  try{
+    const r = await fetch('/api/privacy?mode=' + mode, {method:'POST', signal: ctrl.signal});
+    clearTimeout(timer);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    $('privacy-modal').classList.add('hidden');
+    await refreshMode();
+    await refresh();
+    toast('已按「' + label + '」开始使用。随时可在上方「论文处理方式」里切换。');
+  }catch(e){
+    clearTimeout(timer);
+    // fetch 实在走不通才退回"整页跳转"——这条路径不依赖任何脚本能力。
+    // 落地页会自动跳回本页并带上成功提示，用户不会被困在那边。
+    btn.textContent = '改用跳转方式保存…';
+    const box = $('js-error');
+    box.classList.remove('hidden');
+    box.textContent = '直接保存失败（' + (e.name === 'AbortError' ? '请求超时' : e.message) +
+                      '），正在改用页面跳转方式保存，随后会自动回到本页…';
+    setTimeout(() => { location.href = '/api/privacy/set?mode=' + mode; }, 900);
+  }
+}
+
+// 从"跳转式保存"返回时，/api/privacy/set 会带回 ?mode_changed=xxx，
+// 这里补一条回执并清掉参数，避免用户看到地址栏里挂着一串东西却不知所以。
+(function handleModeChanged(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const m = q.get('mode_changed');
+    if (!m) return;
+    const label = (m === 'local') ? '仅本地处理' : '云端处理';
+    refreshMode();
+    toast('已切换为「' + label + '」，设置已生效。');
+    q.delete('mode_changed');
+    const rest = q.toString();
+    history.replaceState(null, '', location.pathname + (rest ? '?' + rest : ''));
+  }catch(e){ /* 老浏览器不支持就算了，不影响使用 */ }
+})();
+
+/* ── 论文清单（可单篇删除 + 解析状态） ── */
+async function loadPapers(){
+  let d;
+  try{ d = await (await fetch('/api/papers', {cache:'no-store'})).json(); }
+  catch(e){ return; }
+  const box = $('papers-box');
+  if (!d.count){ box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+
+  const color = {'就绪':'var(--ok)', '题录':'var(--ink3)', '待解析':'var(--warn)',
+                 '无正文':'var(--warn)', '非论文':'var(--danger)', '失败':'var(--danger)'};
+  const pills = {'就绪':'✓', '题录':'仅题录', '待解析':'待解析', '无正文':'无正文',
+                 '非论文':'⚠ 非论文', '失败':'✗'};
+  // 把"非论文"从"读入失败"里分出来：两者处理办法完全不同，
+  // 混在一起会出现"同一件事说两遍"（上面横幅说读入失败、下面那行又说非论文），
+  // 而且"无法参与回原文核对"对一份策划案来说是不准确的描述（实测被问到过）。
+  const notPaper = d.papers.filter(p => p.status === '非论文');
+  const bad = d.papers.filter(p => !p.ok && p.kind !== 'ref' && p.status !== '非论文');
+
+  $('papers-list').innerHTML =
+    (bad.length ? `<div class="warn-box" style="margin-bottom:10px">
+       <b>有 ${bad.length} 篇没能正常读入</b><br>
+       <span class="muted">这些论文无法参与内容抽取与"回原文核对"。
+       自检报告里出现的"无法核对原文"，可能就是这个原因，而不是你的引用有问题。</span>
+     </div>` : '') +
+    (notPaper.length ? `<div class="warn-box" style="margin-bottom:10px;
+         background:#fff8e6;border-color:#f0d9a0">
+       <b>有 ${notPaper.length} 份文件看起来不是学术论文</b><br>
+       <span class="muted">它们不会参与内容抽取与综述生成（因为读不到论文章节与参考文献），
+       <b>对你的其他论文和已生成的结果没有影响</b>。如果只是传错了文件，
+       点右边的「删除」移除即可；真的是要用的论文，请确认上传的是完整版。</span>
+     </div>` : '') +
+    d.papers.map(p => `
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;
+                  border:1px solid var(--line);border-radius:9px;margin-bottom:6px;background:#fafbfd">
+        <span style="flex:0 0 auto;font-size:12px;padding:2px 8px;border-radius:999px;
+                     border:1px solid ${color[p.status] || 'var(--line)'};
+                     color:${color[p.status] || 'var(--ink3)'}">${pills[p.status] || p.status}</span>
+        <span style="flex:1;min-width:0;font-size:13.5px">
+          <span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                title="${esc(p.title)}">${esc(p.title || '(无标题)')}</span>
+          <span class="muted" style="font-size:12.5px">
+            ${esc(p.year || '')}${p.venue ? ' · ' + esc(p.venue) : ''}
+            ${p.chars ? ' · ' + p.chars + ' 字' : ''}
+            ${p.sections ? ' · ' + p.sections + ' 个章节' : ''}
+            ${p.ref_count ? ' · 参考文献 ' + p.ref_count + ' 条' : ''}
+            ${p.ok ? '' : ' · ' + esc(p.status_note || '')}
+          </span>
+        </span>
+        <button class="link" style="color:#b3261e;flex:0 0 auto"
+                onclick="delPaper('${esc(p.local_pdf)}')">删除</button>
+      </div>`).join('') +
+    `<div class="muted" style="margin-top:6px">共 ${d.count} 篇。删除或补齐文献后需重新生成稿子。</div>`;
+}
+
+async function delPaper(localPdf){
+  if (!confirm('删除这篇论文？删除后需要重新生成稿子。')) return;
+  const r = await (await fetch('/api/delete?local_pdf=' + encodeURIComponent(localPdf),
+                               {method:'POST'})).json();
+  if (!r.ok) { alert('删除失败：' + (r.error || '')); return; }
+  await refresh();
+}
+window.delPaper = delPaper;
+
+
+/* ── 上传 ── */
+$('drop').addEventListener('click', () => $('picker').click());
+$('picker').addEventListener('change', e => { addFiles([...e.target.files]); e.target.value=''; });
+['dragenter','dragover'].forEach(ev => $('drop').addEventListener(ev, e => {
+  e.preventDefault(); $('drop').classList.add('over');
+}));
+['dragleave','drop'].forEach(ev => $('drop').addEventListener(ev, e => {
+  e.preventDefault(); $('drop').classList.remove('over');
+}));
+$('drop').addEventListener('drop', e => addFiles([...e.dataTransfer.files]));
+
+function addFiles(files){
+  const ok = files.filter(f => /\.(pdf|docx)$/i.test(f.name));
+  const bad = files.length - ok.length;
+  pendingFiles = pendingFiles.concat(ok);
+  renderFilelist();
+  if (bad) alert(`已忽略 ${bad} 个不支持的文件（只支持 PDF 与 Word .docx）`);
+  if (ok.length) upload();
+}
+
+function renderFilelist(){
+  $('filelist').innerHTML = pendingFiles.map((f, i) =>
+    `<span class="chip">📄 ${esc(f.name)}
+       <span style="cursor:pointer;color:#aab3c0;font-weight:700" onclick="removeFile(${i})"
+             title="移除这个文件">×</span></span>`).join('');
+}
+
+function removeFile(i){
+  pendingFiles.splice(i, 1);
+  renderFilelist();
+}
+
+async function upload(){
+  if (!pendingFiles.length) return;
+  const fd = new FormData();
+  pendingFiles.forEach(f => fd.append('files', f));
+  const count = pendingFiles.length;
+  $('progress').classList.remove('hidden');
+  setProgress(10, `正在读取 ${count} 篇论文…`);
+  try{
+    const resp = await fetch('/api/upload', {method:'POST', body: fd});
+    if (!resp.ok) throw new Error('服务器返回 ' + resp.status);
+    const r = await resp.json();
+    pendingFiles = [];
+    renderFilelist();
+    if ((r.saved || []).length){
+      setProgress(100, `已放入 ${r.total} 篇论文`);
+      await refresh();
+      $('result-step').scrollIntoView({behavior:'smooth', block:'start'});
+    } else {
+      setProgress(0, '没有可用的文件');
+    }
+    if (r.skipped && r.skipped.length){
+      alert('以下文件被跳过：\n' + r.skipped.join('\n') +
+            '\n\n说明：支持 PDF 与 Word .docx；旧版 .doc 请先另存为 .docx。');
+    }
+    setTimeout(() => $('progress').classList.add('hidden'), (r.saved||[]).length ? 900 : 2200);
+  }catch(e){
+    alert('上传失败：' + e.message + '\n请确认启动窗口还在运行。');
+    setTimeout(() => $('progress').classList.add('hidden'), 1500);
+  }
+}
+
+$('btn-example').addEventListener('click', async () => {
+  const ex = await (await fetch('/api/example')).json();
+  if (!ex.count) { alert('示例论文不存在，请手动上传 PDF。'); return; }
+  $('progress').classList.remove('hidden');
+  setProgress(100, `已载入 ${ex.count} 篇示例论文`);
+  setTimeout(() => $('progress').classList.add('hidden'), 900);
+  await refresh();
+});
+
+$('btn-clear').addEventListener('click', async () => {
+  const n = (lastState && lastState.corpus && lastState.corpus.count) || 0;
+  const hasDraft = !!(lastState && lastState.draft && lastState.draft.markdown);
+  // 说清楚"会删什么、保留什么"——用户按下这个按钮的预期就是回到干净状态，
+  // 含糊的确认框会让人不敢点，或者点了才发现结果没清干净（实测被反馈过）。
+  if (!confirm('清空文献库？\n\n将删除：\n' +
+               '　· ' + n + ' 篇论文记录与它们的原文文件\n' +
+               (hasDraft ? '　· 已生成的综述稿、自检报告、Word 与 Excel\n' : '') +
+               '\n会保留：\n' +
+               '　· 「我的稿子」（有它自己的删除按钮）\n' +
+               '　· 处理方式设置与今日花费记录')) return;
+  const btn = $('btn-clear');
+  btn.disabled = true;
+  const old = btn.textContent;
+  btn.textContent = '正在清空…';
+  try{
+    const resp = await fetch('/api/clear', {method:'POST'});
+    // 必须检查状态码与 ok：服务端拒绝（如 409 只读保护）时返回的
+    // {ok:false,error:...} 若被当成成功，界面就会隐藏结果区并弹"已清空"，
+    // 而数据其实一条没删 —— 用户看到的正是"点了没反应、论文还在"（实测踩到过）。
+    const r = await resp.json().catch(() => ({}));
+    if (!resp.ok || r.ok === false){
+      throw new Error(r.error || ('HTTP ' + resp.status));
+    }
+    $('result-step').classList.add('hidden');
+    $('filelist').innerHTML = '';
+    pendingFiles = [];
+    await refresh();
+    const nf = r.removed_files || 0;
+    toast('已清空：文献库归零' + (nf ? '，并删除 ' + nf + ' 个论文文件' : '') +
+          '；综述稿与下载文件也已一并删除。');
+  }catch(e){
+    alert('清空失败：' + e.message + '\n\n数据没有被改动。可以再试一次。');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = old;
+  }
+});
+
+/* ── 生成 ── */
+/* 进度不再用固定台阶：改为按真实阶段推进（见下方 btn-run 处理），
+   假的百分比会让用户在本地模式下误以为程序卡死。 */
+
+$('btn-run').addEventListener('click', async () => {
+  if (busy) return;
+  busy = true;
+  // 允许点击（不用 disabled）：一轮生成最长要 4 分钟以上，若中途脚本异常、
+  // 请求被掐断，disabled 一旦没被解开按钮就永久变灰，用户只能刷新页面。
+  // 改成"可点 + 点了我告诉你正在跑"，配合下面的看门狗自动复位，不会卡死。
+  $('btn-run').textContent = '正在生成，请稍候…';
+  $('btn-run').classList.add('running');
+  // 看门狗：15 分钟内没有正常收尾就自动复位，避免 busy 卡在 true。
+  clearTimeout(runWatchdog);
+  runWatchdog = setTimeout(() => {
+    busy = false;
+    $('btn-run').classList.remove('running');
+    $('run-tip').innerHTML = '<b style="color:var(--warn)">上一轮似乎没有正常结束</b>，' +
+      '按钮已恢复可用。可先展开页面底部的「系统运行信息」看它停在哪一步，再重试。';
+    if (typeof refresh === 'function') refresh();
+  }, 15 * 60 * 1000);
+  $('result-step').classList.add('hidden');
+  $('progress').classList.remove('hidden');
+
+  // 分阶段真实进度：不再用假进度条猜，而是**按阶段依次调用**，每步完成才推进。
+  // 用户能看到"现在到底在干什么"——本地模型要 4 分钟，这尤其重要。
+  const PHASES = [
+    ['cards',  '正在读取并解析论文…', '抽取文献卡片（每篇约 20 秒，本地模型较慢）'],
+    ['matrix', '正在生成对比矩阵…',   '把卡片整理成横向对照表'],
+    ['draft',  '正在起草综述稿…',     '按主题组织段落并标注引用'],
+    ['check',  '正在核对引用…',       '回原文找证据 + 格式自检'],
+    ['export', '正在导出文档…',       '生成 Word 与 Excel'],
+  ];
+  const logs = [];
+  let failed = null;
+  let recovered = 0;
+  stopRunTimer();                      // 重新开始一轮，计时清零
+  // 出错时先问一句"服务端到底做完了没有"。
+  // 为什么需要：check 阶段要回原文核对几十处引用，实测超过 100 秒；这么长的
+  // 请求很容易被网络抖动/代理掐断，而**服务端往往已经做完了**——产物就在磁盘上。
+  // 原先把任何一次 fetch 失败都当成"整轮失败"，用户看到"出错了"，其实稿子
+  // 已经生成好了（实测踩到过：报错的同时 outputs 里全部产物时间戳都是新的）。
+  async function stageActuallyDone(stage){
+    try{
+      const st = await (await fetch('/api/state', {cache:'no-store'})).json();
+      const fr = st.freshness || {};
+      const n = (st.corpus && st.corpus.count) || 0;
+      switch (stage){
+        case 'cards':  return n > 0 && fr.cards === 'current' &&
+                              (st.cards ? st.cards.count > 0 : false);
+        case 'matrix': return (st.matrix ? st.matrix.count > 0 : false);
+        case 'draft':  return !!(st.draft && st.draft.markdown);
+        case 'check':  return (st.check ? st.check.total != null : false);
+        case 'export': return st.has_docx === true;
+        default:       return false;
+      }
+    }catch(e){ return false; }
+  }
+  for (let k = 0; k < PHASES.length; k++){
+    const [stage, title, hint] = PHASES[k];
+    setProgress(Math.round((k / PHASES.length) * 92) + 4, title);
+    setPhaseStep('第 ' + (k + 1) + ' / ' + PHASES.length + ' 步', hint);
+    try{
+      const r = await (await fetch('/api/run?stage=' + stage, {method:'POST'})).json();
+      logs.push(...(r.log || []));
+      $('log').textContent = logs.join('\n');
+      if (r.ok === false || r.error) throw new Error(r.error || '阶段失败');
+    }catch(e){
+      // 先核对服务端状态：做完了就继续，别让用户白重跑一轮
+      if (await stageActuallyDone(stage)){
+        recovered++;
+        logs.push(title + '：连接中断，但服务端已完成该阶段，继续。');
+        $('log').textContent = logs.join('\n');
+        setPhaseStep('第 ' + (k + 1) + ' / ' + PHASES.length + ' 步',
+                     '连接中断，但服务端已完成该阶段，继续下一步');
+        continue;
+      }
+      failed = `${title}失败：${e.message}`;
+      break;
+    }
+  }
+  stopRunTimer();
+
+  if (failed){
+    setProgress(100, '出错了');
+    setPhaseStep('', failed + '　可展开页面底部「系统运行信息」查看详情');
+  } else {
+    setProgress(100, '全部完成');
+    setPhaseStep('', '');
+    setTimeout(async () => {
+      $('progress').classList.add('hidden');
+      $('result-step').classList.remove('hidden');
+      await refresh();
+      $('result-step').scrollIntoView({behavior:'smooth', block:'start'});
+    }, 400);
+  }
+  busy = false;
+  clearTimeout(runWatchdog);
+  $('btn-run').disabled = false;
+  $('btn-run').classList.remove('running');
+  // 立刻恢复按钮文字：等下面那个 400ms 的 refresh() 会太晚，
+  // 用户在这段时间里看到的是"正在生成，请稍候…"而实际已经跑完了。
+  $('btn-run').textContent = (lastState && lastState.draft && lastState.draft.markdown)
+    ? '重新生成综述稿' : '开始生成综述稿';
+});
+
+/* ── 渲染结果 ── */
+function renderResult(st){
+  const md = st.draft.markdown || '';
+  const m = md.match(/^#{1,3}\s*(?:参考文献|References)\s*$/m);
+  const bodyRaw = m ? md.slice(0, m.index) : md;
+  const refsRaw = m ? md.slice(m.index) : '';
+  const paras = stripMd(bodyRaw).split('\n').map(x=>x.trim()).filter(Boolean)
+                  .filter(x => !/^研究现状$/.test(x));
+  const refs = refsRaw.split('\n').map(x=>x.trim()).filter(x => /^\[\d+\]/.test(x));
+
+  $('paper').innerHTML =
+    '<h3>研究现状</h3>' +
+    paras.map(p => `<p>${highlightCites(p)}</p>`).join('') +
+    (refs.length ? `<div class="refs"><h4>参考文献</h4>${
+        refs.map(r => `<div>${esc(r)}</div>`).join('')}</div>` : '');
+
+  const s = st.check || {};
+  // "引用问题数"与下面列出的条目要对得上：这里直接说明"下面已逐条列出"，
+  // 避免用户看到数字却不知道去哪找对应的那几处。
+  $('metrics').innerHTML = `
+    <div class="metric"><div class="v">${st.corpus.count}</div><div class="k">用了多少篇论文</div></div>
+    <div class="metric"><div class="v">${(st.draft.refs||[]).length}</div><div class="k">参考文献条数</div></div>
+    <div class="metric"><div class="v" style="color:${(s.total||0)>0?'var(--warn)':'var(--ok)'}">${s.total != null ? s.total : '—'}</div>
+      <div class="k">引用问题数（下面已逐条列出）</div></div>`;
+
+  let q = '';
+  // RAG 环节：回原文核对的结果（这是最能体现"引用可信"的部分）
+  const ev = (st.check || {}).evidence_check || {};
+  // 四态必须分开显示。尤其「原文明确矛盾」是硬结论（正文数值/方向与原文不一致），
+  // 而「找不到依据」可能只是检索没命中——两者混在一起，用户分不清
+  // "你去核对一下"和"你写错了"，就会去改本来正确的引用。
+  const contraIssues = (st.check_issues || []).filter(i => (i.kind || '').indexOf('原文明确矛盾') >= 0);
+  const missingSrc = (st.check_issues || []).filter(i => (i.kind || '').indexOf('原文缺失') >= 0);
+  // "回原文核对"这一类在下面有专门的分块展示，因此它要从"其他问题"里排除，
+  // 否则同一批问题会连着列两遍——用户看到"4 处问题"却读了两页一样的内容，
+  // 只会觉得乱（实测截图确认过这个问题）。
+  const ragIssues = (st.check_issues || []).filter(i =>
+    (i.kind || '').indexOf('回原文') >= 0 && (i.kind || '').indexOf('原文明确矛盾') < 0);
+  const shownKey = new Set();
+  const _key = i => (i.kind || '') + '|' + (i.location || '') + '|' + (i.detail || '');
+  [...contraIssues, ...ragIssues, ...missingSrc].forEach(i => shownKey.add(_key(i)));
+  const otherIssues = (st.check_issues || []).filter(i => !shownKey.has(_key(i)));
+
+  // ① 原文明确矛盾：最高优先，单独最显眼地列在最前
+  if (contraIssues.length){
+    q += `<div class="warn-box" style="border-color:#d9534f;background:#fdf3f2">
+      <b style="color:#c9302c">⚠ 原文明确矛盾：${contraIssues.length} 处论断与原文说的不一致</b><br>
+      <span class="muted">这是硬结论，不是"没检索到"——正文的数值或方向与原文冲突。请以原文为准修改。</span>
+      ${contraIssues.slice(0,6).map(i => `<div class="issue high">
+          <b>${esc(i.location)}</b>：${esc(i.detail)}${_evBtn(i.location)}<br>
+          <span class="muted">建议：${esc(i.suggestion)}</span>${_evBox()}</div>`).join('')}
+    </div>`;
+  }
+
+  if (ev.claims_judged){
+    const rate = Math.round((ev.support_rate || 0) * 100);
+    const notEv = (ev.not_evidence != null) ? ev.not_evidence : ev.unsupported;
+    const unver = (ev.unverifiable != null) ? ev.unverifiable : ev.unresolved;
+    if (notEv > 0){
+      q += `<div class="warn-box">
+        <b style="color:var(--warn)">回原文核对：${ev.claims_judged} 条论断中有 ${notEv} 条在原文里找不到支撑</b><br>
+        <span class="muted">系统把正文每一处引用都拿回对应论文的原文做了检索比对。
+        注意：<b>找不到支撑不等于引用写错了</b>——可能只是原文用了别的措辞，请点开原文片段自行判断。</span>
+        ${ragIssues.slice(0,6).map(i => `<div class="issue high">
+            <b>${esc(i.location)}</b>：${esc(i.detail)}${_evBtn(i.location)}<br>
+            <span class="muted">建议：${esc(i.suggestion)}</span>${_evBox()}</div>`).join('')}
+      </div>`;
+    } else if (!contraIssues.length) {
+      q += `<div class="ok-box">
+        <b>✓ 回原文核对通过</b><br>
+        把正文里 ${ev.claims_judged} 条论断逐条拿回对应论文原文做了检索比对，
+        全部找到支撑内容（可核对范围内支持率 ${rate}%${unver ? `，另有 ${unver} 条因原文不在库中无法核对` : ''}）。
+        ${ev.synthesis ? `其中 ${ev.synthesis} 条是综合多篇文献的总结句，已合并比对。` : ''}
+      </div>`;
+    }
+  }
+
+  // 单独提示"原文缺失"：明确告知这不是引用问题
+  if (missingSrc.length){
+    q += `<div class="warn-box" style="background:#f6f8fb;border-color:var(--line)">
+      <b>有 ${missingSrc.length} 处引用因为「原文不在文献库」而无法核对</b><br>
+      <span class="muted">
+        <b>这不是你的引用写错了</b>——是这些文献的原文还没导入，或导入的 PDF 没解析成功。
+        处理办法：到第 1 步展开「管理已放入的论文」查看状态，把标红的重新上传；
+        也可以在「检查我的稿子」里点「去搜索并补齐」自动下载原文。
+      </span>
+      ${missingSrc.slice(0,5).map(i =>
+        `<div class="issue">${esc(i.location)}：${esc(i.detail)}${_evBtn(i.location)}${_evBox()}</div>`).join('')}
+    </div>`;
+  }
+
+  // 其余类别（格式合规 / 编号顺序 / 重复著录 / 引用真实性 / 该引未引 …）
+  // 按类别分组列出，与上面两块不重复。
+  if (otherIssues.length){
+    const byKind = {};
+    otherIssues.forEach(i => { (byKind[i.kind] = byKind[i.kind] || []).push(i); });
+    q += `<div class="warn-box"><b style="color:var(--warn)">另有 ${otherIssues.length} 处需要修改</b>` +
+      Object.keys(byKind).map(k =>
+        `<div style="margin-top:8px"><b>${esc(k)}</b><span class="muted">（${byKind[k].length} 处）</span>` +
+        byKind[k].slice(0, 4).map(i =>
+          `<div class="issue ${i.severity==='高'?'high':''}">
+             ${esc(i.location)}：${esc(i.detail)}${_evBtn(i.location)}<br>
+             <span class="muted">建议：${esc(i.suggestion)}</span>${_evBox()}</div>`).join('') +
+        `</div>`).join('') +
+      `</div>`;
+  }
+
+  if (s.total === 0){
+    q += `<div class="ok-box"><b>✓ 引用检查通过</b><br>
+         ${s.citations_count || 0} 处引用全部能在参考文献表中找到，编号连续，格式符合 GB/T 7714，没有遗漏引用。</div>`;
+  }
+
+  // 降级提示：没有真正的模型正文时，必须让用户知道；但**原因要说准**。
+  // 原判据是 /本地|不可用|关闭/.test(note)——只要说明里出现"本地"二字就显示
+  // "本次用的是离线模式、不会调用大模型"。而"模型有输出但没通过与文献的一致性
+  // 检查"这句说明里恰好含"本地模板"，于是被误报成离线模式，让人以为 Key 没生效
+  //（实测被明确反馈："我切换云端模式并填了 Key，为什么提示离线"）。
+  // 现在按后端给的 fallback_reason 分开说。
+  const note = String(st.draft.llm_note || '');
+  const reason = String(st.draft.fallback_reason || '');
+  if (reason === 'offline'){
+    q = `<div class="warn-box">
+      <b style="color:var(--warn)">本次用的是"离线模式"，正文只是论文清单</b><br>
+      离线模式不会调用大模型，所以旁边只列出了<strong>论文标题与年份</strong>，不是真正的综述段落。<br>
+      <span class="muted">原因：${esc(note)}</span><br>
+      <span class="muted">想要完整综述正文：在 <b>代码\\.env</b> 里填入百炼 API Key，
+      <b>然后重启程序</b>（关闭命令行窗口，重新双击「启动文脉.bat」），再点一次生成。</span>
+    </div>` + q;
+  } else if (reason === 'model_failed'){
+    q = `<div class="warn-box">
+      <b style="color:var(--warn)">模型调用失败，正文暂时只有论文清单</b><br>
+      程序确实尝试调用了模型，但这次没成功，已改用逐字取自卡片的保守模板。<br>
+      <span class="muted">原因：${esc(note)}</span><br>
+      <span class="muted">常见处理：稍后重试；若在离线模式，请确认 <b>models/</b> 下的本地模型完整。</span>
+    </div>` + q;
+  } else if (reason === 'ungrounded'){
+    q = `<div class="warn-box">
+      <b style="color:var(--warn)">生成的正文与所给文献对不上，已改用保守模板</b><br>
+      模型<strong>确实生成了正文</strong>，但其中大部分句子在文献卡片里找不到语言依据，
+      程序判定"不像基于这些文献写的"，于是改用<strong>逐字取自卡片</strong>的模板——
+      更保守，但不编造。<br>
+      <span class="muted">原因：${esc(note)}</span><br>
+      <span class="muted">通常是因为放入的文献与"写综述"这件事不匹配（例如单篇文档、
+      非研究论文、或解析出的可用字段太少）。换入若干篇同方向的论文后重试即可。</span>
+    </div>` + q;
+  }
+  // 该引未引：需要引用却没标注的陈述（放在最后，避免被覆盖）
+  const missN = (st.check || {}).missing_citations || 0;
+  if (missN > 0){
+    const missIssues = (st.check_issues || []).filter(i => (i.kind || '') === '该引未引');
+    q += `<div class="warn-box">
+      <b style="color:var(--warn)">有 ${missN} 处陈述可能需要补充引用</b><br>
+      <span class="muted">这些句子像是研究结论或数据对比，但没有标注来源。若确为你自己的主张，可不加引用。</span>
+      ${missIssues.slice(0,5).map(i => `<div class="issue">
+          <b>${esc(i.location)}</b>：${esc(i.detail)}<br>
+          <span class="muted">${esc(i.suggestion)}</span></div>`).join('')}
+    </div>`;
+  }
+  $('quality').innerHTML = q;
+
+  if (st.matrix && st.matrix.rows && st.matrix.rows.length){
+    const cols = st.matrix.columns;
+    let h = '<tr>' + cols.map(c=>`<th>${esc(c.label)}</th>`).join('') + '</tr>';
+    for (const r of st.matrix.rows){
+      h += '<tr>' + cols.map(c=>{
+        let v = r[c.key];
+        if (Array.isArray(v)) v = v.join('；');
+        if (v===null||v===undefined||v==='') v='—';
+        return `<td>${esc(v)}</td>`;
+      }).join('') + '</tr>';
+    }
+    $('matrix').innerHTML = h;
+  }
+
+  const b = st.benchmark || {};
+  $('tech').innerHTML = `<div class="muted">
+    <b>自检能力验证</b>（人为埋入 4 类错误，看能否查出）：
+    <table style="margin-top:8px">
+      <tr><th>埋入的错误</th><th>能否查出</th></tr>
+      ${(b.cases||[]).map(c=>`<tr><td>${esc(c.error_type)}</td>
+        <td>${c.detected?'✓ 已查出':'✗ 漏检'}</td></tr>`).join('')}
+    </table>
+    <div style="margin-top:10px">查全率：<b>${b.total ? (b.recall*100).toFixed(0)+'%' : '—'}</b>
+    　｜　生成通道：${esc(st.draft.llm_note || '—')}
+    　｜　模型服务：${esc(st.settings['模型服务'])}
+    　｜　今日花费：¥${(st.cost.cost||0).toFixed(4)}</div>
+  </div>`;
+
+  $('result-hint').textContent = st.draft.topics ? '主题：' + st.draft.topics.join('、') : '';
+  // 下载按钮的可用性由 refresh() 依据"结果是否与文献库同步"决定，这里不覆盖
+  const fr = st.freshness || {};
+  if (!fr.needs_run){
+    $('btn-docx').disabled = !st.has_docx;
+    $('btn-xlsx').disabled = !(st.matrix && st.matrix.count);
+  }
+
+  // 有内容就把结果区显示出来（此前漏了这一步，导致生成完却看不到结果）
+  $('result-step').classList.remove('hidden');
+  return st;      // 调用方（如切换处理方式）需要用最新的 settings 给出回执
+}
+
+/* ── 题录导入 ── */
+$('btn-refs').addEventListener('click', () => {
+  $('refs-box').classList.toggle('hidden');
+  if (!$('refs-box').classList.contains('hidden')) $('refs-text').focus();
+});
+
+$('btn-refs-import').addEventListener('click', async () => {
+  const text = $('refs-text').value.trim();
+  const box = $('refs-result');
+  if (!text){
+    box.classList.remove('hidden');
+    box.innerHTML = '<span style="color:#b3261e">请先粘贴题录文本。</span>';
+    return;
+  }
+  const btn = $('btn-refs-import');
+  btn.disabled = true; btn.textContent = '解析中…';
+  try{
+    const fd = new FormData();
+    fd.append('text', text);
+    fd.append('name', '粘贴的题录');
+    const r = await (await fetch('/api/refs', {method:'POST', body: fd})).json();
+    if (!r.ok) throw new Error(r.error || '解析失败');
+    box.classList.remove('hidden');
+    box.innerHTML = `<b style="color:var(--ok)">✓ 成功导入 ${r.added} 条题录</b>
+      <div style="margin-top:8px">${(r.items||[]).map((it,i) =>
+        `<div style="padding:5px 0;border-bottom:1px solid var(--line)">
+           ${i+1}. ${esc(it.title || '(无题名)')}
+           <span class="muted">${esc((it.authors||[]).join('、'))} · ${esc(it.year||'')}
+           · ${esc(it.venue||'')} · [${esc(it.ref_type||'')}]</span>
+         </div>`).join('')}</div>
+      <div class="muted" style="margin-top:8px">
+        题录只有元数据、没有全文，因此「回原文核对」对它不生效（报告中会标注）。
+      </div>`;
+    $('refs-text').value = '';
+    await refresh();
+  }catch(e){
+    box.classList.remove('hidden');
+    box.innerHTML = `<span style="color:#b3261e">导入失败：${esc(e.message)}</span>`;
+  }finally{
+    btn.disabled = false; btn.textContent = '导入这些题录';
+  }
+});
+
+$('btn-docx').addEventListener('click', () => location.href = '/api/download/docx');
+$('btn-xlsx').addEventListener('click', () => location.href = '/api/download/matrix');
+
+/* ── Agent 智能审稿 ── */
+$('btn-agent').addEventListener('click', async () => {
+  const btn = $('btn-agent'), box = $('agent-out');
+  btn.disabled = true; btn.textContent = '审稿中…';
+  $('agent-hint').textContent = '正在自主检查，通常需要 1 分钟左右';
+  box.classList.remove('hidden');
+  box.innerHTML = '<div class="muted">AI 助手正在读稿、挑可疑项、回原文核对…</div>';
+  try{
+    const r = await (await fetch('/api/agent?max_steps=18', {method:'POST'})).json();
+    if (!r.ok) throw new Error(r.error || '审稿失败');
+    const steps = (r.trace || []).filter(t => t.type === 'tool_call');
+    const toolName = {
+      list_sentences:'读取全稿', get_sentence:'查看某句', reference_by_index:'查看文献条目',
+      check_citation_existence:'检查引用真伪', check_ordering:'检查编号顺序',
+      check_format:'检查参考文献格式', find_evidence:'回原文找证据',
+      check_claim_support:'核对论断是否有原文支撑', generate_report:'生成报告'
+    };
+    box.innerHTML = `
+      <div class="ok-box" style="background:#eef3ff;border-color:#cddffd">
+        <b style="color:var(--brand)">AI 助手的审查结论</b><br>
+        ${esc(r.agent_summary || '').replace(/\n/g,'<br>')}
+      </div>
+      <div class="muted" style="margin-bottom:8px">
+        它自己选了 ${steps.length} 步操作、用了 ${(r.tools_used||[]).length} 种工具，
+        共 ${r.steps} 步、${r.seconds} 秒
+      </div>
+      <details open>
+        <summary>它的检查过程（每一步都是它自己决定的）</summary>
+        <div style="margin-top:8px">
+          ${steps.map((t,i) => {
+            const cit = (t.args && (t.args.citation || t.args.idx)) || null;
+            const isCheck = t.tool === 'check_claim_support' || t.tool === 'find_evidence';
+            // 无参工具（检查全部引用/编号/格式等）不要显示空对象 {}——
+            // 那是"它没传参数"的如实结果，但对用户没有任何信息量，
+            // 反而像出了错（实测被问过"这几步是这样子的正常吗"）。
+            const hasArgs = t.args && Object.keys(t.args).length > 0;
+            const argText = hasArgs
+              ? `<span class="muted">${esc(JSON.stringify(t.args)).slice(0,90)}</span>` : '';
+            return `<div class="issue" style="background:#fff">
+              <b>第 ${i+1} 步</b>：${esc(toolName[t.tool] || t.tool)}
+              ${argText}
+              ${(isCheck && cit) ? `<button class="link" style="margin-left:6px"
+                 onclick="showEvidence(${cit}, this)">查看它检索到的原文</button>` : ''}
+              <div class="ev-box" style="display:none;margin-top:8px"></div>
+            </div>`;
+          }).join('')}
+        </div>
+      </details>`;
+  }catch(e){
+    box.innerHTML = `<div class="warn-box">审稿失败：${esc(e.message)}</div>`;
+  }finally{
+    btn.disabled = false; btn.textContent = '开始智能审稿';
+    $('agent-hint').textContent = '它会自己判断该检查什么：先读全稿，再挑可疑的引用回原文核对';
+  }
+});
+
+/* 点开看 Agent 依据的原文证据——让用户能自己判断它说得对不对 */
+/* 从问题条目的 location（形如「引用 [5]」/「引用 [2][6]」）里取出可查证的编号。
+   只在能取到编号时提供「查看原文」——没有编号就没有可核对的对象。 */
+function _firstCitation(loc){
+  const m = String(loc || '').match(/\[(\d{1,3})\]/);
+  return m ? parseInt(m[1], 10) : null;
+}
+/* 每条问题附一个「查看它检索到的原文」按钮 + 展开区。
+   后端 /api/evidence/detail 早就能给出论文名、最高相似度与若干原文片段，
+   而 showEvidence() 也早就写好了（原先只绑在 AI 助手审稿的轨迹上）。
+   自检报告的问题列表此前只给一句结论，用户拿不到任何可自行判断的材料——
+   而这个应用对用户的承诺正是「点开每条结论看我检索到的原文」。 */
+function _evBtn(loc){
+  const n = _firstCitation(loc);
+  if (n === null) return '';
+  return `　<button class="link" style="font-size:12.5px"
+            onclick="showEvidence(${n}, this)">查看它检索到的原文</button>`;
+}
+function _evBox(){
+  return `<div class="ev-box" style="display:none;margin-top:8px"></div>`;
+}
+
+async function showEvidence(citation, el){
+  const row = el.closest('.issue');
+  const box = row.querySelector('.ev-box');
+  const btnText = '查看它检索到的原文';
+  if (box.style.display === 'block'){ box.style.display = 'none'; el.textContent = btnText; return; }
+  el.textContent = '加载中…';
+  // 检索片段的开头是"论文标题 + 正文"，而标题上面已经单独显示了；
+  // 不去掉这段前缀，用户看到的第一条"原文"就是标题本身，等于没有信息。
+  const stripTitle = (text, paper) => {
+    let t = String(text || '');
+    const p = String(paper || '').trim();
+    if (p && t.startsWith(p)) t = t.slice(p.length);
+    return t.replace(/^[\s:：,，.。\-—]+/, '').trim() || String(text || '');
+  };
+  try{
+    const d = await (await fetch('/api/evidence/detail?citation=' + citation, {cache:'no-store'})).json();
+    if (d.error){ box.innerHTML = `<span class="muted">无法获取：${esc(d.error)}</span>`; }
+    else {
+      const ev = (d.evidence || []);
+      // 页码让用户能翻回原文自己看——这是"证据"能不能被验证的关键。
+      // 拿不到页码（Word 稿、或该段定位不到）就如实留空，不能瞎写一个页码。
+      const pageTag = (e) => {
+        const p = String(e.page_range || e.page || '').trim();
+        return p ? `<span style="color:var(--brand);font-weight:600">第 ${esc(p)} 页</span>　`
+                 : '<span class="muted">页码未知</span>　';
+      };
+      box.innerHTML = `
+        <div class="muted" style="margin-bottom:6px">
+          文献：<b>${esc(d.paper || '—')}</b>　最高相似度：${d.best_score}
+        </div>
+        ${ev.map((e,i) => `
+          <div style="border-left:3px solid var(--brand-line);background:#f8fafc;
+                      padding:8px 10px;border-radius:6px;margin-bottom:6px;font-size:13px">
+            <div class="muted" style="margin-bottom:4px">${pageTag(e)}原文片段 ${i+1}（相似度 ${e.score}）</div>
+            <div style="line-height:1.7">${esc(stripTitle(e.text, d.paper))}</div>
+          </div>`).join('')}
+        ${ev.length ? '' : '<div class="muted">这篇论文没有可用的原文片段。</div>'}
+        <div class="muted" style="font-size:12.5px">
+          以上是该论文原文中与这句话最相关的段落，你可以照着页码翻回原文核对。
+          若这些段落与你的论断无关，多半是这句引用需要改。
+        </div>
+        <div class="warn-box" style="margin-top:8px;font-size:12.5px;padding:8px 11px">
+          <b>请注意这里可能误报，尤其是「否定式」的论断。</b><br>
+          像「所有方法都未能超越 X」「该问题尚未解决」这类<b>否定式表述</b>，原文里对应的
+          往往是“我们没有做到”“性能低于…”之类的句子，检索不容易命中，于是系统会判成
+          「找不到支撑」。<b>判断依据以你看到的原文片段为准</b>；如果你在这些片段里已经找到
+          支撑，就按正确的那条处理。
+        </div>`;
+    }
+    box.style.display = 'block';
+    el.textContent = '收起原文';
+  }catch(e){
+    box.innerHTML = `<span class="muted">获取失败：${esc(e.message)}</span>`;
+    box.style.display = 'block';
+    el.textContent = '收起原文';
+  }
+}
+window.showEvidence = showEvidence;
+
+/* ══════════════ 模式切换：写综述 / 检查我的稿子 ══════════════ */
+let appMode = 'write';
+
+function setMode(m){
+  appMode = m;
+  const isCheck = m === 'check';
+  $('tab-write').style.background = isCheck ? '' : 'var(--brand-soft)';
+  $('tab-write').style.borderColor = isCheck ? '' : 'var(--brand)';
+  $('tab-check').style.background = isCheck ? 'var(--brand-soft)' : '';
+  $('tab-check').style.borderColor = isCheck ? 'var(--brand)' : '';
+  $('tab-hint').textContent = isCheck
+    ? '上传你写的稿子，检查引用是否真实、格式是否合规'
+    : '导入参考文献，自动起草综述并做引用自检';
+  // 检查模式下隐藏"写综述"的三步流程
+  $('step-upload').classList.toggle('hidden', isCheck);
+  $('step-run').classList.toggle('hidden', isCheck);
+  $('result-step').classList.toggle('hidden', isCheck || !(lastState && lastState.draft && lastState.draft.markdown));
+  $('step-mydraft').classList.toggle('hidden', !isCheck);
+  if (isCheck) refreshMyDraft();
+  else $('draft-result').classList.add('hidden');
+}
+
+$('tab-write').addEventListener('click', () => setMode('write'));
+$('tab-check').addEventListener('click', () => setMode('check'));
+
+/* ── 稿子上传 ── */
+function draftDrop(){
+  const d = $('draft-drop');
+  d.addEventListener('click', () => $('draft-picker').click());
+  d.addEventListener('dragover', e => { e.preventDefault(); d.style.borderColor = 'var(--brand)'; });
+  d.addEventListener('dragleave', () => { d.style.borderColor = ''; });
+  d.addEventListener('drop', e => {
+    e.preventDefault(); d.style.borderColor = '';
+    if (e.dataTransfer.files.length) uploadMyDraft(e.dataTransfer.files[0]);
+  });
+  $('draft-picker').addEventListener('change', e => {
+    if (e.target.files.length) uploadMyDraft(e.target.files[0]);
+  });
+}
+
+async function uploadMyDraft(file){
+  if (!/\.docx$/i.test(file.name)){
+    alert('请上传 Word 格式（.docx）。如果稿子是 PDF，请在 Word 里另存为 .docx。');
+    return;
+  }
+  const hint = $('draft-hint');
+  hint.textContent = '上传解析中…';
+  const fd = new FormData();
+  fd.append('files', file);
+  try{
+    const r = await (await fetch('/api/mydraft/upload', {method:'POST', body: fd})).json();
+    if (!r.ok) throw new Error(r.error || '上传失败');
+    hint.textContent = '';
+    await refreshMyDraft();
+  }catch(e){
+    hint.textContent = '';
+    alert('上传失败：' + e.message);
+  }
+}
+
+async function refreshMyDraft(){
+  let d;
+  try{ d = await (await fetch('/api/mydraft', {cache:'no-store'})).json(); }
+  catch(e){ return; }
+  const info = $('draft-info');
+  if (!d.has_draft){
+    info.classList.add('hidden');
+    $('btn-check-draft').disabled = true;
+    $('btn-del-draft').classList.add('hidden');
+    $('draft-hint').textContent = '请先上传稿子';
+    $('draft-result').classList.add('hidden');
+    return;
+  }
+  info.classList.remove('hidden');
+  info.innerHTML = `<b>已上传：${esc(d.title || d.name || '')}</b>
+    <div style="margin-top:6px">
+      字数 ${d.chars || '—'} · 参考文献区 ${d.ref_count || 0} 条 ·
+      识别章节：${(d.sections || []).join('、') || '未识别'}
+    </div>
+    <div class="muted" style="margin-top:4px;font-size:12.5px">
+      上传时间 ${esc(d.uploaded_at || '')}　（稿子不会进入文献库）
+    </div>`;
+  $('btn-check-draft').disabled = false;
+  $('btn-del-draft').classList.remove('hidden');
+  $('draft-hint').textContent = d.report ? '已有检查结果，可重新检查' : '';
+  if (d.report) renderDraftReport(d.report);
+}
+
+async function delMyDraft(){
+  if (!confirm('删除稿子与检查结果？')) return;
+  await fetch('/api/mydraft/delete', {method:'POST'});
+  $('draft-result').classList.add('hidden');
+  await refreshMyDraft();
+}
+
+$('btn-del-draft').addEventListener('click', delMyDraft);
+
+let lastDraftReport = null;
+
+async function checkDraft(){
+  const btn = $('btn-check-draft');
+  btn.disabled = true; btn.textContent = '检查中…';
+  $('draft-hint').textContent = '正在逐项检查引用与格式，请稍候';
+  try{
+    const r = await (await fetch('/api/mydraft/check', {method:'POST'})).json();
+    if (!r.ok) throw new Error(r.error || '检查失败');
+    lastDraftReport = r;
+    renderDraftReport(r);
+    $('draft-hint').textContent = '';
+  }catch(e){
+    $('draft-hint').textContent = '';
+    alert('检查失败：' + e.message);
+  }finally{
+    btn.disabled = false; btn.textContent = '重新检查';
+  }
+}
+
+$('btn-check-draft').addEventListener('click', checkDraft);
+
+function renderDraftReport(rep){
+  lastDraftReport = rep;
+  const s = rep.summary || {};
+  const box = $('draft-result');
+  box.classList.remove('hidden');
+
+  const sevColor = { '高': 'var(--danger)', '中': 'var(--warn)', '低': 'var(--ink3)' };
+  $('draft-summary').innerHTML = `
+    <div class="metrics">
+      <div class="metric"><div class="v">${s.citations_in_text || 0}</div><div class="k">正文引用处数</div></div>
+      <div class="metric"><div class="v">${s.refs_entries || 0}</div><div class="k">参考文献条数</div></div>
+      <div class="metric"><div class="v">${s.matched_library || 0}</div><div class="k">可在库中核对</div></div>
+      <div class="metric"><div class="v" style="color:${(s.total||0)>0?'var(--warn)':'var(--ok)'}">${s.total || 0}</div><div class="k">发现问题</div></div>
+    </div>
+    <div class="muted" style="margin-top:10px;font-size:13px">
+      检查时间 ${esc(rep.checked_at || '')}　·　文献库共 ${s.library_total || 0} 篇；
+      其中 <b>${s.matched_library || 0}</b> 条参考文献能在库中匹配到，
+      <b>${s.unmatched || 0}</b> 条未匹配（未匹配的无法核对原文）。
+    </div>`;
+
+  const issues = rep.issues || [];
+  if (!issues.length){
+    $('draft-issues').innerHTML =
+      `<div class="ok-box"><b>✓ 未发现引用问题</b><br>
+       <span class="muted">引用编号、格式与著录均未检出问题。</span></div>`;
+  } else {
+    const byKind = {};
+    issues.forEach(i => { (byKind[i.kind] = byKind[i.kind] || []).push(i); });
+    $('draft-issues').innerHTML = Object.keys(byKind).map(k => `
+      <div style="margin-bottom:12px">
+        <div style="font-weight:600;margin-bottom:6px">
+          ${esc(k)} <span class="muted">（${byKind[k].length} 处）</span>
+        </div>
+        ${byKind[k].map(i => `
+          <div class="issue">
+            <b style="color:${sevColor[i.severity] || 'inherit'}">[${esc(i.severity)}]</b>
+            ${esc(i.detail)}
+            ${i.suggestion ? `<div class="muted" style="margin-top:3px">建议：${esc(i.suggestion)}</div>` : ''}
+          </div>`).join('')}
+      </div>`).join('');
+  }
+
+  const m = rep.match || {};
+  const matched = m.matched || [], unmatched = m.unmatched || [];
+  $('draft-match').innerHTML = `
+    <details ${unmatched.length ? 'open' : ''}>
+      <summary>引用可核实性明细（哪些能核对、哪些不能）</summary>
+      <div style="margin-top:10px">
+        ${matched.length ? `<div style="margin-bottom:10px">
+          <b style="color:var(--ok)">✓ 可在文献库中核对（${matched.length} 条）</b>
+          ${matched.slice(0, 12).map(x => `
+            <div class="issue" style="border-left-color:var(--ok-line)">
+              [${x.index}] → 库中「${esc((x.library.title || '').slice(0, 44))}」
+              ${x.library.has_fulltext ? '<span class="muted">（有全文，可核对事实）</span>'
+                                       : '<span class="muted">（⚠ 仅题录，无全文）</span>'}
+            </div>`).join('')}
+        </div>` : ''}
+        ${unmatched.length ? `<div>
+          <b style="color:var(--warn)">⚠ 未在文献库中找到（${unmatched.length} 条）</b>
+          <div class="muted" style="margin:6px 0 8px">
+            这些引用现在无法核对事实。点右边的「去搜索并补齐」，我会从 OpenAlex
+            找到原文下载下来，之后重新检查就能核对了。
+          </div>
+          ${unmatched.slice(0, 12).map(x => `
+            <div class="issue" style="display:flex;gap:10px;align-items:flex-start">
+              <span style="flex:1">[${x.index}] ${esc((x.entry || '').slice(0, 64))}</span>
+              <button class="ghost" style="flex:0 0 auto;font-size:12.5px;padding:4px 10px"
+                      onclick="findAndImport(${x.index}, this)">去搜索并补齐</button>
+            </div>
+            <div id="find-box-${x.index}" class="hidden" style="margin:0 0 8px 8px"></div>`).join('')}
+        </div>` : ''}
+      </div>
+    </details>`;
+}
+
+/* ── 引用补齐：按标题搜 OpenAlex → 选一篇导入 → 重新检查 ── */
+async function findAndImport(index, btn){
+  const box = $('find-box-' + index);
+  const rep = lastDraftReport || {};
+  const un = ((rep.match || {}).unmatched || []).find(x => x.index === index);
+  if (!un){ return; }
+  // 从条目里猜标题：GB/T 7714 里标题在作者之后、[类型] 之前
+  let title = (un.entry || '');
+  const m = title.match(/\]\s*([^\[\]]{8,180}?)\s*\[[A-Z]{1,2}(?:\/OL)?\]/);
+  if (m) title = m[1];
+  else title = title.replace(/^\[\d+\]\s*/, '').split(/[.。]/).slice(1, 3).join('. ').trim();
+  if (title.length < 6){
+    box.classList.remove('hidden');
+    box.innerHTML = '<span class="muted">无法从这条参考文献里识别出标题，请手动导入该文献的 PDF。</span>';
+    return;
+  }
+  btn.disabled = true; btn.textContent = '搜索中…';
+  box.classList.remove('hidden');
+  box.innerHTML = `<div class="muted">正在按「${esc(title.slice(0, 50))}」搜索…</div>`;
+  try{
+    const d = await (await fetch('/api/find?title=' + encodeURIComponent(title) + '&limit=4',
+                                 {cache:'no-store'})).json();
+    if (!d.ok || !d.candidates.length){
+      box.innerHTML = `<span class="muted">没搜到候选（${esc(d.error || '无结果')}）。
+        可以手动下载该文献的 PDF 后在此上传。</span>`;
+      return;
+    }
+    box.innerHTML = `<div class="muted" style="margin-bottom:6px">
+        搜到 ${d.candidates.length} 个候选，点一篇导入（会下载原文并自动解析）：</div>` +
+      d.candidates.map(c => `
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:6px 8px;
+                    border:1px solid var(--line);border-radius:8px;margin-bottom:5px;background:#fff">
+          <span style="flex:1;font-size:13px">
+            ${esc((c.title || '').slice(0, 60))}
+            <span class="muted">${c.year || ''} · ${esc((c.venue || '').slice(0, 30))} · 被引 ${c.cited_by_count}</span>
+          </span>
+          ${c.pdf_url
+            ? `<button class="primary" style="flex:0 0 auto;font-size:12.5px;padding:4px 12px"
+                       onclick="doImport('${esc(c.id)}', ${index}, this)">导入</button>`
+            : '<span class="muted" style="flex:0 0 auto;font-size:12px">无开放全文</span>'}
+        </div>`).join('');
+  }catch(e){
+    box.innerHTML = `<span class="muted">搜索失败：${esc(e.message)}</span>`;
+  }finally{
+    btn.disabled = false; btn.textContent = '去搜索并补齐';
+  }
+}
+
+async function doImport(workId, index, btn){
+  btn.disabled = true; btn.textContent = '下载中…';
+  const box = $('find-box-' + index);
+  try{
+    const fd = new FormData();
+    fd.append('work_id', workId);
+    const r = await (await fetch('/api/find/import', {method:'POST', body: fd})).json();
+    if (!r.ok) throw new Error(r.error || '导入失败');
+    box.innerHTML = `<div style="color:var(--ok);font-size:13px">
+        ✓ 已导入「${esc((r.title || '').slice(0, 50))}」（${r.size_mb} MB），正在重新检查…</div>`;
+    await refreshMyDraft();
+    await checkDraft();          // 重新检查，让这条引用变成"可核对"
+  }catch(e){
+    box.innerHTML = `<span style="color:#b3261e;font-size:13px">导入失败：${esc(e.message)}</span>`;
+    btn.disabled = false; btn.textContent = '导入';
+  }
+}
+window.findAndImport = findAndImport;
+window.doImport = doImport;
+
+draftDrop();
+setMode('write');
+
+/* ── 处理方式切换（兑现首次弹窗的承诺） ── */
+/* 服务端上报的「模型服务」是否表明云端真的可用。
+   判据是后端 settings.describe() 的取值，不是用户的选项——
+   用户选了云端但没配 Key 时，实际走的是本地模型，状态条必须如实反映，
+   否则界面在误导用户（实测：交付包用占位符 Key，状态条却写"云端处理"）。 */
+function _cloudReady(){
+  const svc = (lastState && lastState.settings && lastState.settings['模型服务']) || '';
+  return svc.indexOf('百炼') >= 0;
+}
+/* 当前处理方式（用户选的），由 _paintMode 维护，refresh 后据此重绘 */
+let _currentMode = 'cloud';
+/* 供 refresh() 调用：用最新的服务端状态重绘状态条与模式说明 */
+function applyCurrentMode(){ _paintMode(_currentMode); }
+function _paintMode(mode){
+  _currentMode = (mode === 'local') ? 'local' : 'cloud';
+  const el = $('mode-now');
+  const isLocal = (_currentMode === 'local');
+  const cloudReady = _cloudReady();
+  // 选了云端但云端不可用 → 显示"实际在用本地模型"，并说明原因
+  const cloudButNoKey = !isLocal && !cloudReady;
+  const label = isLocal
+    ? '<b style="color:var(--warn)">仅本地处理</b>（论文不出本机，生成质量略低）'
+    : (cloudButNoKey
+        ? '<b style="color:var(--warn)">云端处理（已选，但未配置 Key，实际用本地模型）</b>'
+        : '<b style="color:var(--ok)">云端处理</b>（阿里云百炼，生成质量最好）');
+  if (el) el.innerHTML = label;
+  // 状态条也同步，保证"当前是什么方式"在页面顶部永远可见
+  const strip = $('strip-mode');
+  if (strip){
+    strip.innerHTML = isLocal
+      ? '<b style="color:var(--warn)">仅本地处理</b>'
+      : (cloudButNoKey
+          ? '<b style="color:var(--warn)">云端处理（未配置 Key，实际本地）</b>'
+          : '<b style="color:var(--ok)">云端处理</b>');
+  }
+  // 两个按钮都保留、把"当前这一项"标成选中且不可点：
+  // 用户能一眼看出现在处于哪种方式，而不是"要切的按钮消失了、只剩另一个"——
+  // 后者让人分不清当前状态（实测反馈"很乱"）。
+  const cb = $('btn-mode-cloud'), lb = $('btn-mode-local');
+  [[cb, false], [lb, true]].forEach(([b, isLocalBtn]) => {
+    if (!b) return;
+    const active = (isLocalBtn === isLocal);
+    b.disabled = active;
+    b.textContent = active
+      ? (isLocalBtn ? '✓ 当前：仅本地处理' : '✓ 当前：云端处理')
+      : (isLocalBtn ? '改用仅本地处理' : '改用云端处理');
+    b.classList.toggle('mode-on', active);
+  });
+  // 说明条也一起重绘：它和状态条是同一件事的两种呈现，分开更新必然出现
+  // "状态条已切本地、横幅还写着云端"这种自相矛盾的画面。
+  _paintKeyHint();
+  // 供 refresh() 调用：用最新的服务端状态重绘状态条与模式说明
+}
+async function refreshMode(){
+  try{
+    const p = await (await fetch('/api/privacy', {cache:'no-store'})).json();
+    _paintMode(p.mode === 'local' ? 'local' : 'cloud');
+    return p.mode;
+  }catch(e){
+    const el = $('mode-now');
+    if (el) el.textContent = '（读取失败）';
+    return null;
+  }
+}
+
+async function switchMode(mode){
+  const label = mode === 'local' ? '仅本地处理' : '云端处理';
+  const cb = $('btn-mode-cloud'), lb = $('btn-mode-local');
+  const btn = (mode === 'local') ? lb : cb;
+  if (btn && btn.disabled) return;         // 已经是这个方式，不重复操作
+  if (!confirm('切换为「' + label + '」？\n\n' +
+               (mode === 'local'
+                 ? '切换后论文内容不再上传，改用随应用打包的本地模型。\n已有结果仍可用，重新生成时才会用新方式。'
+                 : '切换后论文片段会上传至阿里云百炼进行分析。\n已有结果仍可用，重新生成时才会用新方式。'))){
+    return;
+  }
+  // 立刻给出"正在处理"的反馈：点了没反应是最让人不安的
+  const prev = btn ? btn.textContent : '';
+  if (btn){ btn.disabled = true; btn.textContent = '正在切换…'; }
+  try{
+    const r = await fetch('/api/privacy?mode=' + mode, {method:'POST'});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    // 就地更新，不刷新整页：切换只影响"以后新生成用什么方式"，与已有产物无关，
+    // 整页刷新反而会打断用户（也容易让人以为数据被重置了）。
+    _paintMode(mode);
+    const st = await refresh();
+    // 说清"已生效"与"什么时候用得上"，避免用户以为已有结果会变
+    const svc = (st && st.settings && st.settings['模型服务']) || label;
+    toast('已切换为「' + label + '」，立即生效（当前：' + svc + '）。' +
+          '已有结果不受影响；下次点「生成」时按新方式处理。');
+  }catch(e){
+    if (btn){ btn.disabled = false; btn.textContent = prev; }
+    alert('切换失败：' + e.message + '\n可以再试一次；若反复失败，请到启动窗口查看提示。');
+  }
+}
+
+$('btn-mode-cloud').addEventListener('click', () => switchMode('cloud'));
+$('btn-mode-local').addEventListener('click', () => switchMode('local'));
+
+refreshMode();
+refresh();
+</script>
+</body>
+</html>

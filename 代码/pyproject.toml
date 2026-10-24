@@ -1,0 +1,27 @@
+[project]
+name = "wenmai"
+version = "1.0.0"
+description = "文脉 WenMai · 文献综述写作与引用自检助手（2026 重庆市 AI 大模型创新应用大赛 · 阿里「创意 AI 校园」）"
+requires-python = ">=3.9"
+dependencies = [
+    "PyMuPDF>=1.23",
+    "python-docx>=1.0",
+    "numpy>=1.21",
+    "scikit-learn>=1.0",
+    "fastapi>=0.95",
+    "uvicorn>=0.20",
+    "jinja2>=3.0",
+]
+
+[project.optional-dependencies]
+full = ["jieba>=0.42", "openpyxl>=3.0"]
+
+[project.scripts]
+wenmai = "wenmai.__main__:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["wenmai"]

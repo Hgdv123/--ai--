@@ -1,0 +1,19 @@
+# 旧 git 历史备份（内含约 2.9 GB 对象，仅本地保留，勿提交）
+.git-backup-firstcommit/
+
+# 本地大模型权重（单文件最大 2007 MB，超出 GitHub 100 MB 硬限制，另行分发）
+代码/源程序/models/
+
+# 离线依赖 wheel 包（约 362 MB，另行分发）
+代码/源程序/wheels/
+
+# 运行时缓存与状态
+代码/源程序/.cache/
+代码/源程序/.bootstrap_state.json
+__pycache__/
+*.pyc
+
+# 系统文件
+Thumbs.db
+.DS_Store
+desktop.ini

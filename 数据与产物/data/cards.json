@@ -1,0 +1,227 @@
+{
+  "count": 6,
+  "built_at": "2026-09-18 16:47:33",
+  "llm_enabled": false,
+  "cards": [
+    {
+      "fields": {
+        "problem": "The method that we propose in this paper addresses the general problem of meta-learning (Thrun & Pratt, 1998;",
+        "method": "We propose an algorithm for meta-learning that is model-agnostic, in the sense that it is compatible with any model trained with gradient descent and applicable to a variety of different learning problems, including classiﬁcation, regression, and reinforcement learning.",
+        "datasets": [],
+        "metrics": [],
+        "limitation": "We introduced a meta-learning method based on learning easily adaptable model parameters through gradient descent.",
+        "takeaway": "For example, a neural network might learn internal features that are broadly applicable to all tasks in p(T ), rather than a single individual task."
+      },
+      "confidence": {
+        "problem": 0.85,
+        "method": 0.9,
+        "datasets": 0.0,
+        "metrics": 0.0,
+        "limitation": 0.7,
+        "takeaway": 0.6
+      },
+      "source": "local",
+      "index": 1,
+      "title": "Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks",
+      "year": 2017,
+      "venue": "arXiv (Cornell University)",
+      "authors": [
+        "Chelsea Finn",
+        "Pieter Abbeel",
+        "Sergey Levine"
+      ],
+      "cited_by_count": 5776,
+      "pdf": "pdf/001.pdf",
+      "doi": "https://doi.org/10.48550/arxiv.1703.03400",
+      "source_url": "https://arxiv.org/pdf/1703.03400",
+      "openalex_id": "https://openalex.org/W2604763608"
+    },
+    {
+      "fields": {
+        "problem": "This survey focuses on Data Augmentation, a data-space solution to the problem of limited data.",
+        "method": "",
+        "datasets": [
+          "datasets such",
+          "final"
+        ],
+        "metrics": [],
+        "limitation": "The paper concludes with a “Discussion” of the presented material, areas of “Future work”, and “Conclusion”.",
+        "takeaway": "Before discussing image augmentation techniques, it is useful to frame the context of the problem and consider what makes image recognition such a difficult task in the first place."
+      },
+      "confidence": {
+        "problem": 0.85,
+        "method": 0.0,
+        "datasets": 0.8,
+        "metrics": 0.0,
+        "limitation": 0.7,
+        "takeaway": 0.6
+      },
+      "source": "local",
+      "index": 2,
+      "title": "A survey on Image Data Augmentation for Deep Learning",
+      "year": 2019,
+      "venue": "Journal Of Big Data",
+      "authors": [
+        "Connor Shorten",
+        "Taghi M. Khoshgoftaar"
+      ],
+      "cited_by_count": 13077,
+      "pdf": "pdf/002.pdf",
+      "doi": "https://doi.org/10.1186/s40537-019-0197-0",
+      "source_url": "https://journalofbigdata.springeropen.com/track/pdf/10.1186/s40537-019-0197-0",
+      "openalex_id": "https://openalex.org/W2954996726"
+    },
+    {
+      "fields": {
+        "problem": "Few-shot or one-shot learning of classiﬁers requires a signiﬁcant inductive bias towards the type of task to be learned.",
+        "method": "In this paper, we propose UMTRA, an algorithm that performs unsupervised, model-agnostic meta-learning for classiﬁcation tasks.",
+        "datasets": [
+          "Omniglot",
+          "Imagenet",
+          "UMTRA on the Omniglot",
+          "is a"
+        ],
+        "metrics": [],
+        "limitation": "",
+        "takeaway": "Recently proposed model-agnostic meta-learning approaches [11, 31] can be applied to any differentiable network."
+      },
+      "confidence": {
+        "problem": 0.55,
+        "method": 0.9,
+        "datasets": 0.8,
+        "metrics": 0.0,
+        "limitation": 0.0,
+        "takeaway": 0.6
+      },
+      "source": "local",
+      "index": 3,
+      "title": "Unsupervised Meta-Learning For Few-Shot Image Classification",
+      "year": 2018,
+      "venue": "arXiv (Cornell University)",
+      "authors": [
+        "Siavash Khodadadeh",
+        "Ladislau Bölöni",
+        "Mubarak Shah"
+      ],
+      "cited_by_count": 65,
+      "pdf": "pdf/003.pdf",
+      "doi": "https://doi.org/10.48550/arxiv.1811.11819",
+      "source_url": "https://arxiv.org/pdf/1811.11819",
+      "openalex_id": "https://openalex.org/W2970144620"
+    },
+    {
+      "fields": {
+        "problem": "In few-shot classiﬁcation, we are interested in learning algorithms that train a classiﬁer from only a handful of labeled examples.",
+        "method": "To address this paradigm, we propose novel extensions of Prototypical Networks (Snell et al., 2017) that are augmented with the ability to use unlabeled examples when producing prototypes.",
+        "datasets": [
+          "Omniglot",
+          "miniImageNet",
+          "ImageNet",
+          "datasets: two"
+        ],
+        "metrics": [],
+        "limitation": "As future work, we are working on incorporating fast weights (Ba et al., 2016;",
+        "takeaway": "Indeed, much like a learning algorithm, the model must take in a set of labeled examples and produce a predictor that can be applied to new examples."
+      },
+      "confidence": {
+        "problem": 0.55,
+        "method": 0.9,
+        "datasets": 0.8,
+        "metrics": 0.0,
+        "limitation": 0.7,
+        "takeaway": 0.6
+      },
+      "source": "local",
+      "index": 4,
+      "title": "Meta-Learning for Semi-Supervised Few-Shot Classification",
+      "year": 2018,
+      "venue": "arXiv (Cornell University)",
+      "authors": [
+        "Mengye Ren",
+        "Eleni Triantafillou",
+        "Sachin Ravi",
+        "Jake Snell",
+        "Kevin Swersky",
+        "Joshua B. Tenenbaum",
+        "Hugo Larochelle",
+        "Richard S. Zemel"
+      ],
+      "cited_by_count": 728,
+      "pdf": "pdf/004.pdf",
+      "doi": "https://doi.org/10.48550/arxiv.1803.00676",
+      "source_url": "https://arxiv.org/pdf/1803.00676",
+      "openalex_id": "https://openalex.org/W2787035179"
+    },
+    {
+      "fields": {
+        "problem": "Medical datasets often have a skewed class distribution and a lack of high-quality annotated images.",
+        "method": "In this study, we present a few-shot learning approach for the classiﬁcation of ultrasound breast cancer images using meta-learning methods.",
+        "datasets": [
+          "datasets often",
+          "datasets for",
+          "in the BUSI",
+          "datasets and"
+        ],
+        "metrics": [],
+        "limitation": "",
+        "takeaway": "The methodology used in this study can be adapted to other datasets with similar problems."
+      },
+      "confidence": {
+        "problem": 0.55,
+        "method": 0.9,
+        "datasets": 0.8,
+        "metrics": 0.0,
+        "limitation": 0.0,
+        "takeaway": 0.6
+      },
+      "source": "local",
+      "index": 5,
+      "title": "Few-shot classification of ultrasound breast cancer images using meta-learning algorithms",
+      "year": 2024,
+      "venue": "Neural Computing and Applications",
+      "authors": [
+        "Gültekin Işık",
+        "İshak Paçal"
+      ],
+      "cited_by_count": 69,
+      "pdf": "pdf/005.pdf",
+      "doi": "https://doi.org/10.1007/s00521-024-09767-y",
+      "source_url": "https://link.springer.com/content/pdf/10.1007/s00521-024-09767-y.pdf",
+      "openalex_id": "https://openalex.org/W4394912784"
+    },
+    {
+      "fields": {
+        "problem": "A more general approach to few-shot learning is by meta-learning, which trains a meta-learner from many related tasks to direct the learning of a learner for a new task, without relying on ad hoc knowledge about the problem.",
+        "method": "In this paper, we develop Meta-SGD, an SGD-like, easily trainable meta-learner that can initialize and adapt any differentiable learner in just one step, on both supervised learning and reinforcement learning.",
+        "datasets": [],
+        "metrics": [],
+        "limitation": "One important future work is large-scale meta-learning.",
+        "takeaway": "While these efforts can alleviate the issue of data scarcity to some extend, the way prior knowledge is used is speciﬁc and not generalizable."
+      },
+      "confidence": {
+        "problem": 0.85,
+        "method": 0.9,
+        "datasets": 0.0,
+        "metrics": 0.0,
+        "limitation": 0.7,
+        "takeaway": 0.6
+      },
+      "source": "local",
+      "index": 6,
+      "title": "Meta-SGD: Learning to Learn Quickly for Few-Shot Learning",
+      "year": 2017,
+      "venue": "arXiv (Cornell University)",
+      "authors": [
+        "Zhenguo Li",
+        "Fengwei Zhou",
+        "Fei Chen",
+        "Hang Li"
+      ],
+      "cited_by_count": 847,
+      "pdf": "pdf/006.pdf",
+      "doi": "https://doi.org/10.48550/arxiv.1707.09835",
+      "source_url": "https://arxiv.org/pdf/1707.09835",
+      "openalex_id": "https://openalex.org/W2742093937"
+    }
+  ]
+}

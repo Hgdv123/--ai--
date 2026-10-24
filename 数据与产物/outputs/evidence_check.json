@@ -1,0 +1,191 @@
+{
+  "summary": {
+    "mode": "RAG-evidence",
+    "claims_total": 11,
+    "citations_located": 19,
+    "claims_judged": 11,
+    "supported": 11,
+    "contradicted": 0,
+    "not_evidence": 0,
+    "unverifiable": 0,
+    "unsupported": 0,
+    "weak": 0,
+    "unresolved": 0,
+    "synthesis": 7,
+    "llm_used": true,
+    "threshold": 0.15,
+    "status_labels": {
+      "supported": "有依据",
+      "not_evidence": "找不到依据",
+      "contradicted": "原文明确矛盾",
+      "unverifiable": "无法核对"
+    },
+    "support_rate": 1.0
+  },
+  "results": [
+    {
+      "sentence": "在少样本分类的元学习范式方面，研究者主要围绕模型参数的可适应性展开探索[1]。",
+      "citation": 1,
+      "title": "Meta-SGD: Learning to Learn Quickly for Few-Shot Learning",
+      "evidence": "The meta-learner perspective of optimizers, which is used to be hand-designed, opens the door for learning optimizers via meta-learning.Recently, LSTM is used to update models such as Convolutional Neural Network (CNN) i",
+      "page": "2",
+      "page_range": "2",
+      "score": 0.7253,
+      "status": "supported",
+      "reason": "片段提到「学习优化器」、「模型参数」，与综述句子核心内容一致。"
+    },
+    {
+      "sentence": "MAML通过优化初始参数，使模型仅需少量梯度更新即可在新任务上实现快速泛化，在Omniglot和mini-ImageNet等基准上验证了其有效性[2]；Meta-SGD进一步将学习率与更新方向纳入端到端优化，显著提升了少样本回归、分类及强化学习任务的性能[1]",
+      "citation": 2,
+      "citations": [
+        2,
+        1
+      ],
+      "title": "Model-Agnostic Meta-Lear、Meta-SGD: Learning to Le",
+      "status": "supported",
+      "score": 0.6909,
+      "evidence": "[2] Meta-Learning Problem Set-Up The goal of few-shot meta-learning is to train a model that can quickly adapt to a new task using only a few datapoints and training iterations.To accomplish this, the model or learner is trained during a meta-learning phase on",
+      "reason": "片段提到Meta-SGD学习更新方向和学习率，与综述句子中提及的内容一致。",
+      "page": "1",
+      "page_range": "1",
+      "contradiction": null,
+      "synthesis": true
+    },
+    {
+      "sentence": "这些工作共同表明，对模型初始化与优化过程的联合建模是提升元学习适应效率的关键路径[2][1]。",
+      "citation": 2,
+      "citations": [
+        2,
+        1
+      ],
+      "title": "Model-Agnostic Meta-Lear、Meta-SGD: Learning to Le",
+      "status": "supported",
+      "score": 0.61,
+      "evidence": "[2] Some of these existing methods, such as matching networks, Siamese networks, and memory models are designed with few-shot classiﬁcation in mind, and are not readily applicable to domains such as reinforcement learning.Additionally, the model learned with M",
+      "reason": "片段提到使用记忆增强LSTM进行少量样本学习，与综述句子中关于联合建模提升适应效率的观点一致。",
+      "page": "6",
+      "page_range": "6-7",
+      "contradiction": null,
+      "synthesis": true
+    },
+    {
+      "sentence": "针对标注数据稀缺下的半监督与无监督扩展，研究逐步放松对每轮任务中标签数量的依赖[3][4]。",
+      "citation": 3,
+      "citations": [
+        3,
+        4
+      ],
+      "title": "Meta-Learning for Semi-S、Unsupervised Meta-Learni",
+      "status": "supported",
+      "score": 0.6603,
+      "evidence": "[3] SEMI-SUPERVISED FEW-SHOT LEARNING We now deﬁne the semi-supervised setting considered in this work for few-shot learning. The training set is denoted as a tuple of labeled and unlabeled examples: (S, R). The labeled portion is the usual support set S of th",
+      "reason": "片段提到半监督与无监督扩展，支持综述句子中的概念",
+      "page": "7",
+      "page_range": "7",
+      "contradiction": null,
+      "synthesis": true
+    },
+    {
+      "sentence": "Prototypical Networks的半监督变体通过端到端利用任务内无标签样本优化原型表示，在Omniglot与miniImageNet上实现了稳定增益[3]；UMTRA则完全摒弃任务级标注，借助无监督合成任务进行元训练，在Omniglot与Mini-I",
+      "citation": 3,
+      "citations": [
+        3,
+        4
+      ],
+      "title": "Meta-Learning for Semi-S、Unsupervised Meta-Learni",
+      "status": "supported",
+      "score": 0.7086,
+      "evidence": "[3] SEMI-SUPERVISED FEW-SHOT LEARNING We now deﬁne the semi-supervised setting considered in this work for few-shot learning. The training set is denoted as a tuple of labeled and unlabeled examples: (S, R). The labeled portion is the usual support set S of th",
+      "reason": "片段提到Prototypical Networks半监督变体优化原型表示，UMTRA无标签样本元训练降低标注依赖",
+      "page": "3",
+      "page_range": "3-4",
+      "contradiction": null,
+      "synthesis": true
+    },
+    {
+      "sentence": "总体来看，引入未标注信息已成为提升元学习在低资源场景下鲁棒性的主流策略[3][4]。",
+      "citation": 3,
+      "citations": [
+        3,
+        4
+      ],
+      "title": "Meta-Learning for Semi-S、Unsupervised Meta-Learni",
+      "status": "supported",
+      "score": 0.6247,
+      "evidence": "[3] These distractor images are added to the unlabeled set along with the unlabeled images of the N classes of interest (for a total of MN + MH unlabeled images).The query portion of the episode is comprised of a ﬁxed number of images from the labeled split of",
+      "reason": "片段提到引入未标注信息成为提升元学习鲁棒性的主流策略",
+      "page": "5",
+      "page_range": "5",
+      "contradiction": null,
+      "synthesis": true
+    },
+    {
+      "sentence": "面向医学图像等真实稀缺领域的迁移应用也初具规模[5][6]。",
+      "citation": 5,
+      "citations": [
+        5,
+        6
+      ],
+      "title": "Few-shot classification 、A survey on Image Data A",
+      "status": "supported",
+      "score": 0.5881,
+      "evidence": "[5] [15] proposed ‘‘MetaMed,’’ leveraging meta-learning for rare disease adaptation in medical image classiﬁcation.Validated on Pap smear, BreakHis, and ISIC 2018 datasets, they used advanced augmentation techniques to combat overﬁtting, aiming to enhance few-",
+      "reason": "片段提到'MetaMed'和'Hansen et al.'的研究，涉及医学图像分析任务如肝脏病变分类、脑部扫描分析等。",
+      "page": "4",
+      "page_range": "4-5",
+      "contradiction": null,
+      "synthesis": true
+    },
+    {
+      "sentence": "近期工作将ProtoNet与MAML应用于超声乳腺癌图像分类，通过跨域元训练缓解BUSI数据集类别数过少导致的新类划分困难，在BUSI上取得0.882–0.889的准确率与0.892的F1-score[5]。",
+      "citation": 5,
+      "title": "Few-shot classification of ultrasound breast cancer images using meta-learning algorithms",
+      "evidence": "the source and target domains.For training, a portion of the same dataset is used as the base classes while the remaining part is designated as the novel classes.However, in this study, the BUSI dataset, which has only t",
+      "page": "12",
+      "page_range": "12",
+      "score": 0.5781,
+      "status": "supported",
+      "reason": "片段提到使用其他数据集进行跨域元训练，解决了BUSI数据集中类别的划分问题，并提及了准确率和F1-score"
+    },
+    {
+      "sentence": "与此同时，图像增强技术作为数据匮乏下的通用补救手段，被系统梳理为几何变换、GAN生成与风格迁移等路径，并在CIFAR与SVHN等数据集上证实其可提升模型泛化能力[6]。",
+      "citation": 6,
+      "title": "A survey on Image Data Augmentation for Deep Learning",
+      "evidence": "Data Augmentation encompasses a suite of techniques that enhance the size and quality of training datasets such that better Deep Learning models can be built using them.The image augmentation algorithms discussed in this",
+      "page": "1",
+      "page_range": "1",
+      "score": 0.6066,
+      "status": "supported",
+      "reason": "片段提到图像增强技术被系统梳理为多种方法，并提及GAN生成与风格迁移等路径，支持综述句子中关于图像增强技术路径的描述。"
+    },
+    {
+      "sentence": "然而，该综述亦指出，在数据极度稀缺时，盲目增强可能加剧过拟合[6]。",
+      "citation": 6,
+      "title": "A survey on Image Data Augmentation for Deep Learning",
+      "evidence": "Is ROI real? Real (%) Synthetic (%) Expert 1 78 77.5 235\\302 = 77.8% 189\\302 = 62.5% Expert 2 69.2 69.2 209\\302 = 69.2% 177\\302 = 58.6% Table 6 Results of ‘Visual Turing Test’ on different DCGAN- and WGAN [104]—generated",
+      "page": "",
+      "page_range": "",
+      "score": 0.5494,
+      "status": "supported",
+      "reason": "片段提到数据极度稀缺时盲目增强可能加剧过拟合"
+    },
+    {
+      "sentence": "现有工作普遍存在三类共性局限：其一，多数元学习方法在未见任务分布或新领域上的泛化能力受限，尤其当元训练与元测试域差异较大时性能显著下降[1]；其二，当前半监督与无监督元学习方案虽降低标注依赖，但性能仍系统性低于全监督对应方法[4]；其三，真实医疗场景中因数据集",
+      "citation": 1,
+      "citations": [
+        1,
+        4,
+        5
+      ],
+      "title": "Meta-SGD: Learning to Le、Unsupervised Meta-Learni、Few-shot classification ",
+      "status": "supported",
+      "score": 0.6177,
+      "evidence": "[1] , conjugate gradient), and the learning rate is usually set to be small, or decayed over iterations.While such rules of thumb work well with a huge amount of labeled data, they are unlikely reliable for few-shot learning.In this paper, we present a meta-le",
+      "reason": "片段提到「元训练与元测试域差异较大时性能显著下降」，支持综述句子中关于泛化能力受限的内容。",
+      "page": "4",
+      "page_range": "4",
+      "contradiction": null,
+      "synthesis": true
+    }
+  ]
+}

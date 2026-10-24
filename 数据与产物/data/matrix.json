@@ -1,0 +1,185 @@
+{
+  "count": 6,
+  "built_at": "2026-09-18 16:47:33",
+  "columns": [
+    {
+      "key": "index",
+      "label": "#"
+    },
+    {
+      "key": "title",
+      "label": "文献"
+    },
+    {
+      "key": "year",
+      "label": "年份"
+    },
+    {
+      "key": "cited_by_count",
+      "label": "被引"
+    },
+    {
+      "key": "problem",
+      "label": "解决的问题"
+    },
+    {
+      "key": "method",
+      "label": "方法"
+    },
+    {
+      "key": "datasets",
+      "label": "数据集"
+    },
+    {
+      "key": "metrics",
+      "label": "关键结果"
+    },
+    {
+      "key": "limitation",
+      "label": "局限"
+    }
+  ],
+  "rows": [
+    {
+      "index": 1,
+      "title": "Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks",
+      "year": 2017,
+      "cited_by_count": 5776,
+      "problem": "The method that we propose in this paper addresses the general problem of meta-learning (Thrun & Pratt, 1998;",
+      "method": "We propose an algorithm for meta-learning that is model-agnostic, in the sense that it is compatible with any model trained with gradient descent and applicable to a variety of different learning problems, including classiﬁcation, regression, and reinforcement learning.",
+      "datasets": [],
+      "metrics": [],
+      "limitation": "We introduced a meta-learning method based on learning easily adaptable model parameters through gradient descent.",
+      "takeaway": "For example, a neural network might learn internal features that are broadly applicable to all tasks in p(T ), rather than a single individual task.",
+      "source": "local"
+    },
+    {
+      "index": 2,
+      "title": "A survey on Image Data Augmentation for Deep Learning",
+      "year": 2019,
+      "cited_by_count": 13077,
+      "problem": "This survey focuses on Data Augmentation, a data-space solution to the problem of limited data.",
+      "method": "",
+      "datasets": [
+        "datasets such",
+        "final"
+      ],
+      "metrics": [],
+      "limitation": "The paper concludes with a “Discussion” of the presented material, areas of “Future work”, and “Conclusion”.",
+      "takeaway": "Before discussing image augmentation techniques, it is useful to frame the context of the problem and consider what makes image recognition such a difficult task in the first place.",
+      "source": "local"
+    },
+    {
+      "index": 3,
+      "title": "Unsupervised Meta-Learning For Few-Shot Image Classification",
+      "year": 2018,
+      "cited_by_count": 65,
+      "problem": "Few-shot or one-shot learning of classiﬁers requires a signiﬁcant inductive bias towards the type of task to be learned.",
+      "method": "In this paper, we propose UMTRA, an algorithm that performs unsupervised, model-agnostic meta-learning for classiﬁcation tasks.",
+      "datasets": [
+        "Omniglot",
+        "Imagenet",
+        "UMTRA on the Omniglot",
+        "is a"
+      ],
+      "metrics": [],
+      "limitation": "",
+      "takeaway": "Recently proposed model-agnostic meta-learning approaches [11, 31] can be applied to any differentiable network.",
+      "source": "local"
+    },
+    {
+      "index": 4,
+      "title": "Meta-Learning for Semi-Supervised Few-Shot Classification",
+      "year": 2018,
+      "cited_by_count": 728,
+      "problem": "In few-shot classiﬁcation, we are interested in learning algorithms that train a classiﬁer from only a handful of labeled examples.",
+      "method": "To address this paradigm, we propose novel extensions of Prototypical Networks (Snell et al., 2017) that are augmented with the ability to use unlabeled examples when producing prototypes.",
+      "datasets": [
+        "Omniglot",
+        "miniImageNet",
+        "ImageNet",
+        "datasets: two"
+      ],
+      "metrics": [],
+      "limitation": "As future work, we are working on incorporating fast weights (Ba et al., 2016;",
+      "takeaway": "Indeed, much like a learning algorithm, the model must take in a set of labeled examples and produce a predictor that can be applied to new examples.",
+      "source": "local"
+    },
+    {
+      "index": 5,
+      "title": "Few-shot classification of ultrasound breast cancer images using meta-learning algorithms",
+      "year": 2024,
+      "cited_by_count": 69,
+      "problem": "Medical datasets often have a skewed class distribution and a lack of high-quality annotated images.",
+      "method": "In this study, we present a few-shot learning approach for the classiﬁcation of ultrasound breast cancer images using meta-learning methods.",
+      "datasets": [
+        "datasets often",
+        "datasets for",
+        "in the BUSI",
+        "datasets and"
+      ],
+      "metrics": [],
+      "limitation": "",
+      "takeaway": "The methodology used in this study can be adapted to other datasets with similar problems.",
+      "source": "local"
+    },
+    {
+      "index": 6,
+      "title": "Meta-SGD: Learning to Learn Quickly for Few-Shot Learning",
+      "year": 2017,
+      "cited_by_count": 847,
+      "problem": "A more general approach to few-shot learning is by meta-learning, which trains a meta-learner from many related tasks to direct the learning of a learner for a new task, without relying on ad hoc knowledge about the problem.",
+      "method": "In this paper, we develop Meta-SGD, an SGD-like, easily trainable meta-learner that can initialize and adapt any differentiable learner in just one step, on both supervised learning and reinforcement learning.",
+      "datasets": [],
+      "metrics": [],
+      "limitation": "One important future work is large-scale meta-learning.",
+      "takeaway": "While these efforts can alleviate the issue of data scarcity to some extend, the way prior knowledge is used is speciﬁc and not generalizable.",
+      "source": "local"
+    }
+  ],
+  "topics": [
+    {
+      "name": "meta-learning",
+      "members": [
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "titles": [
+        "Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks",
+        "Unsupervised Meta-Learning For Few-Shot Image Classification",
+        "Meta-Learning for Semi-Supervised Few-Shot Classification",
+        "Few-shot classification of ultrasound breast cancer images using meta-",
+        "Meta-SGD: Learning to Learn Quickly for Few-Shot Learning"
+      ]
+    },
+    {
+      "name": "few-shot",
+      "members": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "titles": [
+        "Unsupervised Meta-Learning For Few-Shot Image Classification",
+        "Meta-Learning for Semi-Supervised Few-Shot Classification",
+        "Few-shot classification of ultrasound breast cancer images using meta-",
+        "Meta-SGD: Learning to Learn Quickly for Few-Shot Learning"
+      ]
+    },
+    {
+      "name": "model-agnostic",
+      "members": [
+        0,
+        2
+      ],
+      "titles": [
+        "Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks",
+        "Unsupervised Meta-Learning For Few-Shot Image Classification"
+      ]
+    }
+  ]
+}

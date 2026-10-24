@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<title>文脉 · 请选择论文处理方式</title>
+<style>
+  body{margin:0;background:#f5f7fa;color:#14181f;font-size:15.5px;line-height:1.75;
+       font-family:-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+       display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .card{background:#fff;border-radius:16px;max-width:660px;width:100%;
+        padding:30px 32px;box-shadow:0 10px 34px rgba(20,24,31,.10)}
+  h1{margin:0 0 8px;font-size:21px}
+  .sub{color:#737d8c;font-size:14px;margin:0 0 22px}
+  label.opt{display:block;border:2px solid #e6e9ee;border-radius:12px;padding:16px 18px;
+            cursor:pointer;margin-bottom:12px}
+  label.opt:hover{border-color:#cddffd;background:#f7faff}
+  label.opt.sel{border-color:#2563d6;background:#eef3ff}
+  .opt b{font-size:16px}
+  .opt .desc{font-size:14px;margin-top:6px;line-height:1.75}
+  .muted{color:#737d8c;font-size:13px}
+  .pill{background:#eef3ff;border:1px solid #cddffd;border-radius:999px;
+        padding:1px 10px;font-size:12.5px;margin-left:8px}
+  button{width:100%;background:#2563d6;color:#fff;border:0;border-radius:10px;
+         padding:15px;font-size:17px;font-weight:600;cursor:pointer;
+         font-family:inherit;margin-top:10px}
+  button:hover{background:#1d54b8}
+  .foot{margin-top:16px;text-align:center}
+</style>
+</head>
+<body>
+<form class="card" method="POST" action="/api/privacy/save" id="f">
+  <h1>开始前，请先了解你的论文会怎么处理</h1>
+  <p class="sub">这是一个学术写作辅助工具，需要把论文内容交给大模型分析。请选择你的处理方式。</p>
+
+  <label class="opt sel" id="l-cloud">
+    <input type="radio" name="mode" value="cloud" checked style="margin-right:8px">
+    <b>① 云端处理（推荐，效果完整）</b><span class="pill">默认</span>
+    <div class="desc">
+      论文的<strong>标题、摘要、方法与结论片段</strong>会通过接口发送至
+      <strong>阿里云百炼（通义千问）</strong>进行分析，用于生成对比表与综述稿。<br>
+      <span class="muted">上传的 PDF 原文件<strong>不会</strong>被上传，只发送用于理解的文本片段；
+      发送内容不用于模型训练。分析结果保存在你自己电脑上。</span>
+    </div>
+  </label>
+
+  <label class="opt" id="l-local">
+    <input type="radio" name="mode" value="local" style="margin-right:8px">
+    <b>② 仅本地处理（不联网）</b>
+    <div class="desc">
+      论文内容<strong>完全不离开你的电脑</strong>，不调用任何云端服务。<br>
+      <span class="muted">代价：无法生成综述正文（只给出文献对比表与基本信息）。
+      适合文献涉密、或导师未发表成果等不便外传的情况。</span>
+    </div>
+  </label>
+
+  <p class="muted">选好后点击下面的按钮即可进入应用。之后可以在应用里随时切换。</p>
+  <button type="submit">进入应用</button>
+
+  <div class="foot">
+    <a href="/?skip=1" class="muted">不想选？点这里直接进入应用（按默认的云端处理）</a>
+  </div>
+</form>
+<script>
+  // 纯增强：点了让边框变色；即使脚本不跑，表单也照常可用
+  document.querySelectorAll('input[name=mode]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      document.getElementById('l-cloud').className = 'opt' + (r.value === 'cloud' && r.checked ? ' sel' : '');
+      document.getElementById('l-local').className = 'opt' + (r.value === 'local' && r.checked ? ' sel' : '');
+    });
+  });
+</script>
+</body>
+</html>

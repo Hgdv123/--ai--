@@ -1,0 +1,141 @@
+{
+  "query": "few-shot image classification meta-learning",
+  "fetched_at": "2026-09-17 00:37:09",
+  "total_hit": 45167,
+  "count": 6,
+  "skipped": 1,
+  "mismatched": 0,
+  "records": [
+    {
+      "id": "https://openalex.org/W2604763608",
+      "title": "Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks",
+      "year": 2017,
+      "venue": "arXiv (Cornell University)",
+      "authors": [
+        "Chelsea Finn",
+        "Pieter Abbeel",
+        "Sergey Levine"
+      ],
+      "language": "en",
+      "cited_by_count": 5776,
+      "doi": "https://doi.org/10.48550/arxiv.1703.03400",
+      "abstract": "We propose an algorithm for meta-learning that is model-agnostic, in the sense that it is compatible with any model trained with gradient descent and applicable to a variety of different learning problems, including classification, regression, and reinforcement learning. The goal of meta-learning is to train a model on a variety of learning tasks, such that it can solve new learning tasks using only a small number of training samples. In our approach, the parameters of the model are explicitly trained such that a small number of gradient steps with a small amount of training data from a new task will produce good generalization performance on that task. In effect, our method trains the model to be easy to fine-tune. We demonstrate that this approach leads to state-of-the-art performance on two few-shot image classification benchmarks, produces good results on few-shot regression, and accelerates fine-tuning for policy gradient reinforcement learning with neural network policies.",
+      "pdf_url": "https://arxiv.org/pdf/1703.03400",
+      "local_pdf": "pdf/001.pdf",
+      "local_file": "pdf/001.pdf",
+      "doc_type": "pdf",
+      "pdf_bytes": 4064212,
+      "source": "OpenAlex"
+    },
+    {
+      "id": "https://openalex.org/W2954996726",
+      "title": "A survey on Image Data Augmentation for Deep Learning",
+      "year": 2019,
+      "venue": "Journal Of Big Data",
+      "authors": [
+        "Connor Shorten",
+        "Taghi M. Khoshgoftaar"
+      ],
+      "language": "en",
+      "cited_by_count": 13077,
+      "doi": "https://doi.org/10.1186/s40537-019-0197-0",
+      "abstract": "Deep convolutional neural networks have performed remarkably well on many Computer Vision tasks. However, these networks are heavily reliant on big data to avoid overfitting. Overfitting refers to the phenomenon when a network learns a function with very high variance such as to perfectly model the training data. Unfortunately, many application domains do not have access to big data, such as medical image analysis. This survey focuses on Data Augmentation, a data-space solution to the problem of limited data. Data Augmentation encompasses a suite of techniques that enhance the size and quality of training datasets such that better Deep Learning models can be built using them. The image augmentation algorithms discussed in this survey include geometric transformations, color space augmentations, kernel filters, mixing images, random erasing, feature space augmentation, adversarial training, generative adversarial networks, neural style transfer, and meta-learning. The application of augmentation methods based on GANs are heavily covered in this survey. In addition to augmentation techniques, this paper will briefly discuss other characteristics of Data Augmentation such as test-time augmentation, resolution impact, final dataset size, and curriculum learning. This survey will present existing methods for Data Augmentation, promising developments, and meta-level decisions for implementing Data Augmentation. Readers will understand how Data Augmentation can improve the performance of their models and expand limited datasets to take advantage of the capabilities of big data.",
+      "pdf_url": "https://journalofbigdata.springeropen.com/track/pdf/10.1186/s40537-019-0197-0",
+      "local_pdf": "pdf/002.pdf",
+      "local_file": "pdf/002.pdf",
+      "doc_type": "pdf",
+      "pdf_bytes": 4276196,
+      "source": "OpenAlex"
+    },
+    {
+      "id": "https://openalex.org/W2970144620",
+      "title": "Unsupervised Meta-Learning For Few-Shot Image Classification",
+      "year": 2018,
+      "venue": "arXiv (Cornell University)",
+      "authors": [
+        "Siavash Khodadadeh",
+        "Ladislau Bölöni",
+        "Mubarak Shah"
+      ],
+      "language": "en",
+      "cited_by_count": 65,
+      "doi": "https://doi.org/10.48550/arxiv.1811.11819",
+      "abstract": "Few-shot or one-shot learning of classifiers requires a significant inductive bias towards the type of task to be learned. One way to acquire this is by meta-learning on tasks similar to the target task. In this paper, we propose UMTRA, an algorithm that performs unsupervised, model-agnostic meta-learning for classification tasks. The meta-learning step of UMTRA is performed on a flat collection of unlabeled images. While we assume that these images can be grouped into a diverse set of classes and are relevant to the target task, no explicit information about the classes or any labels are needed. UMTRA uses random sampling and augmentation to create synthetic training tasks for meta-learning phase. Labels are only needed at the final target task learning step, and they can be as little as one sample per class. On the Omniglot and Mini-Imagenet few-shot learning benchmarks, UMTRA outperforms every tested approach based on unsupervised learning of representations, while alternating for the best performance with the recent CACTUs algorithm. Compared to supervised model-agnostic meta-learning approaches, UMTRA trades off some classification accuracy for a reduction in the required labels of several orders of magnitude.",
+      "pdf_url": "https://arxiv.org/pdf/1811.11819",
+      "local_pdf": "pdf/003.pdf",
+      "local_file": "pdf/003.pdf",
+      "doc_type": "pdf",
+      "pdf_bytes": 1237552,
+      "source": "OpenAlex"
+    },
+    {
+      "id": "https://openalex.org/W2787035179",
+      "title": "Meta-Learning for Semi-Supervised Few-Shot Classification",
+      "year": 2018,
+      "venue": "arXiv (Cornell University)",
+      "authors": [
+        "Mengye Ren",
+        "Eleni Triantafillou",
+        "Sachin Ravi",
+        "Jake Snell",
+        "Kevin Swersky",
+        "Joshua B. Tenenbaum",
+        "Hugo Larochelle",
+        "Richard S. Zemel"
+      ],
+      "language": "en",
+      "cited_by_count": 728,
+      "doi": "https://doi.org/10.48550/arxiv.1803.00676",
+      "abstract": "In few-shot classification, we are interested in learning algorithms that train a classifier from only a handful of labeled examples. Recent progress in few-shot classification has featured meta-learning, in which a parameterized model for a learning algorithm is defined and trained on episodes representing different classification problems, each with a small labeled training set and its corresponding test set. In this work, we advance this few-shot classification paradigm towards a scenario where unlabeled examples are also available within each episode. We consider two situations: one where all unlabeled examples are assumed to belong to the same set of classes as the labeled examples of the episode, as well as the more challenging situation where examples from other distractor classes are also provided. To address this paradigm, we propose novel extensions of Prototypical Networks (Snell et al., 2017) that are augmented with the ability to use unlabeled examples when producing prototypes. These models are trained in an end-to-end way on episodes, to learn to leverage the unlabeled examples successfully. We evaluate these methods on versions of the Omniglot and miniImageNet benchmarks, adapted to this new framework augmented with unlabeled examples. We also propose a new split of ImageNet, consisting of a large set of classes, with a hierarchical structure. Our experiments confirm that our Prototypical Networks can learn to improve their predictions due to unlabeled examples, much like a semi-supervised algorithm would.",
+      "pdf_url": "https://arxiv.org/pdf/1803.00676",
+      "local_pdf": "pdf/004.pdf",
+      "local_file": "pdf/004.pdf",
+      "doc_type": "pdf",
+      "pdf_bytes": 2021088,
+      "source": "OpenAlex"
+    },
+    {
+      "id": "https://openalex.org/W4394912784",
+      "title": "Few-shot classification of ultrasound breast cancer images using meta-learning algorithms",
+      "year": 2024,
+      "venue": "Neural Computing and Applications",
+      "authors": [
+        "Gültekin Işık",
+        "İshak Paçal"
+      ],
+      "language": "en",
+      "cited_by_count": 69,
+      "doi": "https://doi.org/10.1007/s00521-024-09767-y",
+      "abstract": "Abstract Medical datasets often have a skewed class distribution and a lack of high-quality annotated images. However, deep learning methods require a large amount of labeled data for classification. In this study, we present a few-shot learning approach for the classification of ultrasound breast cancer images using meta-learning methods. We used prototypical networks and model agnostic meta-learning (MAML) algorithms as meta-learning methods. The breast ultrasound images (BUSI) dataset, which has three classes and is difficult to use in meta-learning, was used for meta-testing in a cross-domain approach along with other datasets for meta-training. Our proposed approach yielded an accuracy range of 0.882–0.889, achieved by implementing the ResNet50 backbone with ProtoNet in a 10-shot setting. These results represent a significant improvement ranging from 6.27 to 7.10% over the baseline accuracy of 0.831. The results showed that ProtoNet outperformed the MAML method for all k-shot settings. In addition, the use of ResNet models as the backbone network for feature extraction was found to be more successful than the use of a four-layer convolutional model. Our proposed method is the first attempt to apply meta-learning for few-shot classification in the BUSI dataset while providing higher accuracy compared to deep learning methods for medical images with small-scale datasets and few classes. The methodology used in this study can be adapted to other datasets with similar problems.",
+      "pdf_url": "https://link.springer.com/content/pdf/10.1007/s00521-024-09767-y.pdf",
+      "local_pdf": "pdf/005.pdf",
+      "local_file": "pdf/005.pdf",
+      "doc_type": "pdf",
+      "pdf_bytes": 1286385,
+      "source": "OpenAlex"
+    },
+    {
+      "id": "https://openalex.org/W2742093937",
+      "title": "Meta-SGD: Learning to Learn Quickly for Few-Shot Learning",
+      "year": 2017,
+      "venue": "arXiv (Cornell University)",
+      "authors": [
+        "Zhenguo Li",
+        "Fengwei Zhou",
+        "Fei Chen",
+        "Hang Li"
+      ],
+      "language": "en",
+      "cited_by_count": 847,
+      "doi": "https://doi.org/10.48550/arxiv.1707.09835",
+      "abstract": "Few-shot learning is challenging for learning algorithms that learn each task in isolation and from scratch. In contrast, meta-learning learns from many related tasks a meta-learner that can learn a new task more accurately and faster with fewer examples, where the choice of meta-learners is crucial. In this paper, we develop Meta-SGD, an SGD-like, easily trainable meta-learner that can initialize and adapt any differentiable learner in just one step, on both supervised learning and reinforcement learning. Compared to the popular meta-learner LSTM, Meta-SGD is conceptually simpler, easier to implement, and can be learned more efficiently. Compared to the latest meta-learner MAML, Meta-SGD has a much higher capacity by learning to learn not just the learner initialization, but also the learner update direction and learning rate, all in a single meta-learning process. Meta-SGD shows highly competitive performance for few-shot learning on regression, classification, and reinforcement learning.",
+      "pdf_url": "https://arxiv.org/pdf/1707.09835",
+      "local_pdf": "pdf/006.pdf",
+      "local_file": "pdf/006.pdf",
+      "doc_type": "pdf",
+      "pdf_bytes": 683910,
+      "source": "OpenAlex"
+    }
+  ],
+  "uploaded_at": "2026-09-17 16:39:31"
+}
